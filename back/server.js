@@ -39,40 +39,62 @@ app.get('/pessoas', async (req, res) => {
 
 // Rota POST - Criar
 app.post('/pessoas', async (req, res) => {
-    const { 
-        nome_razao_social, nome_social_fantasia, cep, endereco, 
-        numero, bairro, cidade, estado, pais, documento, tipo, email 
+    const {
+        nome_razao_social,
+        nome_social_fantasia,
+        cep,
+        endereco,
+        numero,
+        bairro,
+        cidade,
+        estado,
+        pais,
+        documento,
+        tipo,
+        email
     } = req.body;
 
     const query = `
-        INSERT INTO pessoas 
-        (nome_razao_social, nome_social_fantasia, cep, endereco, numero, bairro, cidade, estado, pais, documento, tipo, email) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO pessoas (
+            nome_razao_social,
+            nome_social_fantasia,
+            cep,
+            endereco,
+            numero,
+            bairro,
+            cidade,
+            estado,
+            pais,
+            documento,
+            tipo,
+            email
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
-    
+
     const values = [
-        nome_razao_social, 
-        nome_social_fantasia || null, 
-        cep || null, 
-        endereco || null, 
-        numero || null, 
-        bairro || null, 
-        cidade || null, 
-        estado || null, 
-        pais || 'Brasil', 
-        documento, 
-        tipo, 
+        nome_razao_social,
+        nome_social_fantasia || null,
+        cep || null,
+        endereco || null,
+        numero || null,
+        bairro || null,
+        cidade || null,
+        estado || null,
+        pais || 'Brasil',
+        documento,
+        tipo,
         email || null
     ];
 
     try {
         const [result] = await pool.execute(query, values);
-        res.status(201).json({ id: result.insertId, ...req.body });
-    } catch (error) {
+        res.status(201).json({ id: result.insertId });
+    }catch (error) {
+        console.log("ERRO MYSQL:", error);
         res.status(500).json({ error: error.message });
+    
     }
 });
-
 // Rota PUT - Atualizar
 app.put('/pessoas/:id', async (req, res) => {
     const { id } = req.params;
