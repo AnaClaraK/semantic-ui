@@ -1,24 +1,18 @@
 const express = require("express");
 const app = express();
-const porta = 3000;
 
 const cors = require("cors");
 const conexao = require("./db.js");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+
+const mysql = require("mysql2/promise");
+const pool = mysql.createPool(dbConfig); 
 
 app.use(cors());
 app.use(express.json());
 
-// Configuração do banco de dados
-const dbConfig = {
-    host: 'localhost',
-    user: 'root', // Alterar para o usuário correspondente
-    password: '', // Alterar para a senha correspondente
-    database: 'exemplos'
-};
 
-const pool = mysql.createPool(dbConfig);
+
+
 
 pool.getConnection()
     .then(connection => {
@@ -40,7 +34,17 @@ app.get('/pessoa', async (req, res) => {
     }
 });
 
-// Rota POST - Criar
+// Rota GET - Listar todos - PRODUTOS
+app.get('/produtos', async (req, res) => {
+    try {
+        const [rows] = await pool.execute('SELECT * FROM produtos');
+        res.json(rows);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Rota POST - Criar - PESSOAS
 app.post('/pessoa', async (req, res) => {
     const { 
         nome_razao_social, nome_social_fantasia, cep, endereco, 
@@ -66,6 +70,34 @@ app.post('/pessoa', async (req, res) => {
         documento, 
         tipo, 
         email || null
+    ];
+
+    try {
+        const [result] = await pool.execute(query, values);
+        res.status(201).json({ id: result.insertId, ...req.body });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Rota POST - Criar - PRODUTOS
+app.post('/produtos', async (req, res) => {
+    const { 
+        nomeProduto, descricao, preco, estoque, categoria
+    } = req.body;
+
+    const query = `
+        INSERT INTO produtos 
+        (nomeProduto, descricao, preco, estoque, categoria) 
+        VALUES (?, ?, ?, ?, ?)
+    `;
+    
+    const values = [
+        nomeProduto, 
+        descricao, 
+        preco, 
+        estoque, 
+        categoria
     ];
 
     try {
@@ -110,6 +142,36 @@ app.put('/pessoa/:id', async (req, res) => {
     }
 });
 
+// Rota PUT - Atualizar - PRODUTOS
+app.put('/produtos/:id', async (req, res) => {
+    const { id } = req.params;
+    const { 
+       nomeProduto, descricao, preco, estoque, categoria
+    } = req.body;
+
+    const query = `
+        UPDATE produtos 
+        SET nomeProduto = ?, descricao = ?, preco = ?, estoque = ?, 
+            categoria = ?
+        WHERE id_produto = ?
+    `;
+    
+    const values = [
+        nomeProduto, descricao, preco, estoque, categoria, id
+    ];
+
+    try {
+        const [result] = await pool.execute(query, values);
+        
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: 'Registro de produtos não encontrado' });
+        }
+        res.json({ id, ...req.body });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // Rota DELETE - Remover
 app.delete('/pessoa/:id', async (req, res) => {
     const { id } = req.params;
@@ -119,6 +181,22 @@ app.delete('/pessoa/:id', async (req, res) => {
 
         if (result.affectedRows === 0) {
             return res.status(404).json({ message: 'Registro não encontrado' });
+        }
+        res.status(204).send();
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Rota DELETE - Remover - PRODUTOS
+app.delete('/produtos/:id', async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const [result] = await pool.execute('DELETE FROM produtos WHERE id_produto = ?', [id]);
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: 'Registro de produto não encontrado' });
         }
         res.status(204).send();
     } catch (error) {
