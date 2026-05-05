@@ -189,7 +189,8 @@
 
 <script>
     const API_URL = 'http://localhost:3000/pessoas';
-   
+    let pessoaEditandoId = null;
+
     // Elementos (com proteção pra não quebrar)
     const form = document.getElementById('formPessoa');
     const inputDocumento = document.getElementById('documento');
@@ -334,8 +335,14 @@
     email: inputEmail.value || null
 };
         try {
-            const res = await fetch(API_URL, {
-                method: "POST",
+            const url = pessoaEditandoId 
+                ? `${API_URL}/${pessoaEditandoId}` 
+                : API_URL;
+
+            const metodo = pessoaEditandoId ? "PUT" : "POST";
+
+            const res = await fetch(url, {
+                method: metodo,
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload)
             });
@@ -350,6 +357,7 @@
             alert("Erro de conexão");
         }
     });
+    
    
     // ================= LISTAR =================
    
@@ -374,14 +382,15 @@
     }
    
     // ================= EDITAR =================
-   
     async function editarPessoa(id) {
         const res = await fetch(API_URL);
         const data = await res.json();
-   
+
         const p = data.find(x => x.id === id);
         if (!p) return;
-   
+
+        pessoaEditandoId = id; // 👈 guarda ID
+
         document.getElementById('nome_razao_social').value = p.nome_razao_social || '';
         document.getElementById('documento').value = p.documento || '';
         document.getElementById('email').value = p.email || '';
@@ -391,7 +400,7 @@
         document.getElementById('bairro').value = p.bairro || '';
         document.getElementById('cidade').value = p.cidade || '';
         document.getElementById('estado').value = p.estado || '';
-   
+
         $('.ui.modal').modal('hide');
     }
    

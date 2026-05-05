@@ -23,7 +23,7 @@ pool.getConnection()
     });
 
 // Rota GET - Listar todos
-app.get('/pessoa', async (req, res) => {
+app.get('/pessoas', async (req, res) => {
     try {
         const [rows] = await pool.execute('SELECT * FROM pessoa');
         res.json(rows);
@@ -43,7 +43,7 @@ app.get('/produtos', async (req, res) => {
 });
 
 // Rota POST - Criar - PESSOAS
-app.post('/pessoa', async (req, res) => {
+app.post('/pessoas', async (req, res) => {
     const { 
         nome_razao_social, nome_social_fantasia, cep, endereco, 
         numero, bairro, cidade, estado, pais, documento, tipo, email 
@@ -107,7 +107,7 @@ app.post('/produtos', async (req, res) => {
 });
 
 // Rota PUT - Atualizar
-app.put('/pessoa/:id', async (req, res) => {
+app.put('/pessoas/:id', async (req, res) => {
     const { id } = req.params;
     const { 
         nome_razao_social, nome_social_fantasia, cep, endereco, 
@@ -171,7 +171,7 @@ app.put('/produtos/:id', async (req, res) => {
 });
 
 // Rota DELETE - Remover
-app.delete('/pessoa/:id', async (req, res) => {
+app.delete('/pessoas/:id', async (req, res) => {
     const { id } = req.params;
 
     try {
