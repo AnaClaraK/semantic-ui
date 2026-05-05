@@ -169,7 +169,7 @@
 
 <script>
     const API_URL = 'http://localhost:3000/produtos';
-   
+    let produtoEditandoId = null;
 
     // Pegando elementos do HTML
     const form = document.getElementById('formProdutos');
@@ -189,8 +189,14 @@
         };
 
         try {
-            const res = await fetch(API_URL, {
-                method: "POST",
+            const url = produtoEditandoId 
+                ? `${API_URL}/${produtoEditandoId}` 
+                : API_URL;
+
+            const metodo = produtoEditandoId ? "PUT" : "POST";
+
+            const res = await fetch(url, {
+                method: metodo,
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload)
             });
@@ -209,25 +215,73 @@
 
 
     // ================= LISTAR PRODUTOS =================
-    async function carregarProdutos() {
+   async function carregarProdutos() {
+    try {
+        const res = await fetch(API_URL);
+        const produtos = await res.json();
+
+        tabela.innerHTML = "";
+
+        produtos.forEach(p => {
+            tabela.innerHTML += `
+                <tr>
+                    <td>${p.nomeProduto}</td>
+                    <td>R$ ${p.preco}</td>
+                    <td class="right aligned">${p.estoque}</td>
+                    <td>
+                        <button onclick="editarProduto(${p.id_produto})">✏️</button>
+                        <button onclick="excluirProduto(${p.id_produto})">🗑️</button>
+                    </td>
+                </tr>
+    `;
+});
+
+    } catch (err) {
+        console.log("Erro ao carregar produtos");
+    }
+    }
+
+
+    // ================= FUNÇÃO EDITAR =================
+    async function editarProduto(id) {
+    try {
+        const res = await fetch(API_URL);
+        const produtos = await res.json();
+
+        const produto = produtos.find(p => p.id_produto === id);
+
+        document.getElementById('nomeproduto').value = produto.nomeProduto;
+        document.getElementById('descricao').value = produto.descricao;
+        document.getElementById('categoria').value = produto.categoria;
+        document.getElementById('preco').value = produto.preco;
+        document.getElementById('estoque').value = produto.estoque;
+
+        produtoEditandoId = id;
+
+        alert("Modo edição ativado!");
+        $('.ui.modal').modal('hide');
+
+    } catch (err) {
+        alert("Erro ao carregar produto");
+    }
+}
+ // ================= FUNÇÃO EXCLUIR =================
+    async function excluirProduto(id) {
+        if (!confirm("Deseja excluir esse produto?")) return;
+
         try {
-            const res = await fetch(API_URL);
-            const produtos = await res.json();
-
-            tabela.innerHTML = "";
-
-            produtos.forEach(p => {
-                tabela.innerHTML += `
-                    <tr>
-                        <td>${p.nomeProduto}</td>
-                        <td>R$ ${p.preco}</td>
-                        <td class="right aligned">${p.estoque}</td>
-                    </tr>
-                `;
+            const res = await fetch(`${API_URL}/${id}`, {
+                method: "DELETE"
             });
 
+            if (res.ok) {
+                alert("Produto excluído!");
+                carregarProdutos();
+            } else {
+                alert("Erro ao excluir");
+            }
         } catch (err) {
-            console.log("Erro ao carregar produtos");
+            alert("Erro de conexão");
         }
     }
 
