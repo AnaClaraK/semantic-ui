@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700&display=swap" rel="stylesheet">
-    
+   
     <title>Cadastro Autêntico</title>
     <style>
         :root {
@@ -14,21 +14,21 @@
             --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
         }
 
-        body { 
-            background: var(--bg-gradient); 
+        body {
+            background: var(--bg-gradient);
             font-family: 'Plus Jakarta Sans', sans-serif !important;
             min-height: 100vh;
             display: flex;
             align-items: center;
         }
 
-        .main-container { 
-            max-width: 850px; 
-            margin: auto; 
+        .main-container {
+            max-width: 850px;
+            margin: auto;
             background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(10px);
-            padding: 40px; 
-            border-radius: 24px; 
+            padding: 40px;
+            border-radius: 24px;
             border: 2px solid var(--primary-color); /* ajuste de cor da borda */
             box-shadow: 10px 10px 0px #000;
         }
@@ -103,7 +103,7 @@
             </h1>
         </div>
     </div>
-    
+   
     <div class="ui divider" style="border-top: 2px solid #000; opacity: 0.1;"></div>
 
     <div class="ui buttons" style="margin-bottom: 25px; display:flex; align-items:center; gap:10px;">
@@ -150,12 +150,12 @@
                 <label>Bairro</label>
                 <input type="text" id="bairro">
             </div>
-            
+           
             <div class="field">
                 <label>Cidade</label>
                 <input type="text" id="cidade">
             </div>
-            
+           
             <div class="field">
                 <label>Estado</label>
                 <input type="text" id="estado">
@@ -189,7 +189,8 @@
 
 <script>
     const API_URL = 'http://localhost:3000/pessoas';
-    
+    let pessoaEditandoId = null;
+
     // Elementos (com proteção pra não quebrar)
     const form = document.getElementById('formPessoa');
     const inputDocumento = document.getElementById('documento');
@@ -197,14 +198,14 @@
     const inputEmail = document.getElementById('email');
     const tabela = document.getElementById('tabelaPessoas');
     const modal = document.getElementById('modalPesquisa');
-    
+   
     // ================= VALIDAÇÕES =================
-    
+   
     function validarEmail(email) {
         const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return re.test(email);
     }
-    
+   
     function validarCPF(cpf) {
         if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
         let soma = 0, resto;
@@ -212,21 +213,21 @@
         resto = (soma * 10) % 11;
         if (resto >= 10) resto = 0;
         if (resto !== parseInt(cpf.substring(9, 10))) return false;
-    
+   
         soma = 0;
         for (let i = 1; i <= 10; i++) soma += parseInt(cpf.substring(i-1, i)) * (12 - i);
         resto = (soma * 10) % 11;
         if (resto >= 10) resto = 0;
         return resto === parseInt(cpf.substring(10, 11));
     }
-    
+   
     function validarCNPJ(cnpj) {
         if (cnpj.length !== 14 || /^(\d)\1{13}$/.test(cnpj)) return false;
-    
+   
         let tamanho = 12;
         let numeros = cnpj.substring(0, tamanho);
         let digitos = cnpj.substring(tamanho);
-    
+   
         let soma = 0, pos = 5;
         for (let i = 0; i < 12; i++) {
             soma += numeros[i] * pos--;
@@ -234,32 +235,32 @@
         }
         let resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
         if (resultado != digitos[0]) return false;
-    
+   
         tamanho = 13;
         numeros = cnpj.substring(0, tamanho);
         soma = 0;
         pos = 6;
-    
+   
         for (let i = 0; i < 13; i++) {
             soma += numeros[i] * pos--;
             if (pos < 2) pos = 9;
         }
-    
+   
         resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
         return resultado == digitos[1];
     }
-    
+   
     function validarDocumento(doc) {
         if (doc.length === 11) return validarCPF(doc);
         if (doc.length === 14) return validarCNPJ(doc);
         return false;
     }
-    
+   
     // ================= MÁSCARAS =================
-    
+   
     inputDocumento.addEventListener('input', e => {
         let v = e.target.value.replace(/\D/g, "");
-    
+   
         if (v.length <= 11) {
             v = v.replace(/(\d{3})(\d)/, "$1.$2")
                  .replace(/(\d{3})(\d)/, "$1.$2")
@@ -270,21 +271,21 @@
                  .replace(/\.(\d{3})(\d)/, ".$1/$2")
                  .replace(/(\d{4})(\d)/, "$1-$2");
         }
-    
+   
         e.target.value = v;
     });
-    
+   
     inputCep.addEventListener('input', async e => {
         let v = e.target.value.replace(/\D/g, "");
         v = v.replace(/(\d{5})(\d)/, "$1-$2");
         e.target.value = v;
-    
+   
         const cep = v.replace(/\D/g, "");
         if (cep.length === 8) {
             try {
                 const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
                 const data = await res.json();
-    
+   
                 if (!data.erro) {
                     document.getElementById('endereco').value = data.logradouro || '';
                     document.getElementById('bairro').value = data.bairro || '';
@@ -296,50 +297,56 @@
             }
         }
     });
-    
+   
     // ================= SUBMIT =================
-    
+   
     form.addEventListener('submit', async e => {
         e.preventDefault();
-    
+   
         const docLimpo = inputDocumento.value.replace(/\D/g, "");
-    
+   
         if (!validarEmail(inputEmail.value)) {
             alert("E-mail inválido");
             return;
         }
-    
+   
         if (!validarDocumento(docLimpo)) {
             alert("Documento inválido");
             return;
         }
-    
+   
         const payload = {
-    nome_razao_social: document.getElementById('nome_razao_social').value,
-    nome_social_fantasia: document.getElementById('nome_social_fantasia').value || null,
+            nome_razao_social: document.getElementById('nome_razao_social').value,
+            nome_social_fantasia: document.getElementById('nome_social_fantasia').value || null,
 
-    documento: docLimpo,
-    tipo: docLimpo.length > 11 ? "CNPJ" : "CPF",
+            documento: docLimpo,
+            tipo: docLimpo.length > 11 ? "CNPJ" : "CPF",
 
-    cep: inputCep.value.replace(/\D/g, "") || null,
-    endereco: document.getElementById('endereco').value || null,
-    numero: document.getElementById('numero').value || null,
+            cep: inputCep.value.replace(/\D/g, "") || null,
+            endereco: document.getElementById('endereco').value || null,
+            numero: document.getElementById('numero').value || null,
 
-    bairro: document.getElementById('bairro').value || null,
-    cidade: document.getElementById('cidade').value || null,
-    estado: document.getElementById('estado').value || null,
+            bairro: document.getElementById('bairro').value || null,
+            cidade: document.getElementById('cidade').value || null,
+            estado: document.getElementById('estado').value || null,
 
-    pais: "Brasil",
+            pais: "Brasil",
 
-    email: inputEmail.value || null
-};
+            email: inputEmail.value || null
+        };
         try {
-            const res = await fetch(API_URL, {
-                method: "POST",
+            const url = pessoaEditandoId 
+                ? `${API_URL}/${pessoaEditandoId}` 
+                : API_URL;
+
+            const metodo = pessoaEditandoId ? "PUT" : "POST";
+
+            const res = await fetch(url, {
+                method: metodo,
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload)
             });
-    
+   
             if (res.ok) {
                 alert("Salvo com sucesso");
                 limparFormulario();
@@ -351,14 +358,15 @@
         }
     });
     
+   
     // ================= LISTAR =================
-    
+   
     async function carregarPessoas() {
         const res = await fetch(API_URL);
         const data = await res.json();
-    
+   
         tabela.innerHTML = "";
-    
+   
         data.forEach(p => {
             tabela.innerHTML += `
                 <tr>
@@ -372,16 +380,17 @@
             `;
         });
     }
-    
+   
     // ================= EDITAR =================
-    
     async function editarPessoa(id) {
         const res = await fetch(API_URL);
         const data = await res.json();
-    
+
         const p = data.find(x => x.id === id);
         if (!p) return;
-    
+
+        pessoaEditandoId = id; // 👈 guarda ID
+
         document.getElementById('nome_razao_social').value = p.nome_razao_social || '';
         document.getElementById('documento').value = p.documento || '';
         document.getElementById('email').value = p.email || '';
@@ -391,30 +400,30 @@
         document.getElementById('bairro').value = p.bairro || '';
         document.getElementById('cidade').value = p.cidade || '';
         document.getElementById('estado').value = p.estado || '';
-    
+
         $('.ui.modal').modal('hide');
     }
-    
+   
     // ================= DELETE =================
-    
+   
     async function deletarPessoa(id) {
         if (!confirm("Excluir?")) return;
-    
+   
         await fetch(`${API_URL}/${id}`, { method: "DELETE" });
         carregarPessoas();
     }
-    
+   
     // ================= UI =================
-    
+   
     function limparFormulario() {
         form.reset();
     }
-    
+   
     function abrirModal() {
         $('.ui.modal').modal('show');
         carregarPessoas();
     }
-    
+   
     function fecharModal() {
         $('.ui.modal').modal('hide');
     }

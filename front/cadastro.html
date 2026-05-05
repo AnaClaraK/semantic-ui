@@ -2,297 +2,228 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Pessoas</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700&display=swap" rel="stylesheet">
-    
-    <title>Gerenciador de Produtos</title>
     <style>
-        :root {
-            --primary-color: #6366f1;
-            --border-color: #4f46e5;
-            --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        body {
+            background: #f5f5f5;
+            padding: 30px;
         }
-        body { 
-            background: var(--bg-gradient); 
-            font-family: 'Plus Jakarta Sans', sans-serif !important;
-            min-height: 100vh;
-            padding: 20px;
-        }
-        .main-container { 
-            max-width: 850px; 
-            margin: 50px auto; 
+        .container-box {
+            max-width: 900px;
+            margin: auto;
             background: white;
-            padding: 40px; 
-            border-radius: 20px; 
-            border: 2px solid var(--border-color); 
-            box-shadow: 8px 8px 0px rgba(79, 70, 229, 0.2);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
         }
-        .ui.header { font-weight: 700 !important; }
-        .ui.form .field label { font-weight: 700 !important; margin-bottom: 8px !important; }
-        .ui.form input, .ui.form textarea { border: 1.5px solid #cbd5e1 !important; border-radius: 8px !important; }
-        .ui.form input:focus, .ui.form textarea:focus { border-color: var(--primary-color) !important; }
-        .button.custom-save { background-color: var(--primary-color) !important; color: white !important; border-radius: 8px !important; font-weight: 700 !important; }
     </style>
 </head>
 <body>
-
-<div class="ui container main-container">
-    <h2 class="ui header">
-        <i class="box icon" style="color: var(--primary-color)"></i>
-        <div class="content">
-            Controle de Produtos
-            <div class="sub header">Cadastro e gerenciamento de itens do estoque.</div>
-        </div>
-    </h2>
-
-    <div class="ui divider"></div>
-    
-    <div class="ui buttons">
-        <button class="ui button" onclick="abrirModalEstoque()"><i class="search icon"></i> Ver Estoque</button>
-        <div class="or"></div>
-        <button class="ui button negative" onclick="limparFormulario()"><i class="eraser icon"></i> Limpar</button>
-    </div>
-
-    <form class="ui form" id="formProduto" style="margin-top: 30px;">
-        <input type="hidden" id="produto_id">
-
-        <div class="two fields">
-            <div class="field required">
-                <label>Nome do Produto</label>
-                <input type="text" id="nome" maxlength="100" required placeholder="Ex: Monitor UltraWide">
-            </div>
-            <div class="field">
-                <label>Categoria</label>
-                <input type="text" id="categoria" maxlength="100" placeholder="Ex: Eletrônicos">
-            </div>
-        </div>
-
-        <div class="field required">
-            <label>Descrição</label>
-            <textarea id="descricao" rows="2" maxlength="100" required placeholder="Breve descrição do produto..."></textarea>
-        </div>
-
-        <div class="two fields">
-            <div class="field">
-                <label>Preço (R$)</label>
-                <div class="ui left icon input">
-                    <i class="money bill alternate outline icon" style="color: var(--primary-color)"></i>
-                    <input type="number" id="preco" step="0.01" placeholder="0.00">
-                </div>
-            </div>
-            <div class="field">
-                <label>Quantidade em Estoque</label>
-                <input type="number" id="estoque" step="1" placeholder="0">
-            </div>
-        </div>
-
-        <button type="submit" class="ui fluid large custom-save button">Salvar Produto</button>
-    </form>
-</div>
-
-<div class="ui large modal" id="modalEstoque">
-    <div class="header">Produtos Cadastrados no Banco</div>
-    <div class="content scrolling">
-        <table class="ui celled table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nome</th>
-                    <th>Categoria</th>
-                    <th>Preço</th>
-                    <th>Estoque</th>
-                    <th class="center aligned">Ações</th>
-                </tr>
-            </thead>
-            <tbody id="tabelaProdutos"></tbody>
-        </table>
-    </div>
-</div>
-
-<div class="ui modal" id="modalEdicao">
-    <div class="header" style="background: #fdfdfd; border-bottom: 2px solid var(--primary-color)">
-        <i class="edit icon" style="color: var(--primary-color)"></i> Editar Produto
-    </div>
-    <div class="content">
-        <form class="ui form" id="formProdutoEdicao">
-            <input type="hidden" id="edit_produto_id">
-
-            <div class="two fields">
-                <div class="field required">
-                    <label>Nome do Produto</label>
-                    <input type="text" id="edit_nome" required>
-                </div>
-                <div class="field">
-                    <label>Categoria</label>
-                    <input type="text" id="edit_categoria">
-                </div>
-            </div>
-
-            <div class="field required">
-                <label>Descrição</label>
-                <textarea id="edit_descricao" rows="2" required></textarea>
-            </div>
-
+    <div class="container-box">
+        <h2 class="ui header">
+            Cadastro de Pessoas
+        </h2>
+        <button class="ui blue button" onclick="abrirModal()">
+            Ver Cadastros
+        </button>
+        <button class="ui red button" onclick="limparFormulario()">
+            Limpar
+        </button>
+        <form class="ui form" id="formPessoa">
+            <input type="hidden" id="id">
             <div class="two fields">
                 <div class="field">
-                    <label>Preço (R$)</label>
-                    <input type="number" id="edit_preco" step="0.01">
+                    <label>Nome/Razão Social</label>
+                    <input type="text" id="nome_razao_social" required>
                 </div>
                 <div class="field">
-                    <label>Quantidade em Estoque</label>
-                    <input type="number" id="edit_estoque" step="1">
+                    <label>Nome Fantasia</label>
+                    <input type="text" id="nome_social_fantasia">
                 </div>
             </div>
-            
-            <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: flex-end;">
-                <button type="button" class="ui button black" onclick="fecharModalEdicao()">Cancelar</button>
-                <button type="submit" class="ui button custom-save">Atualizar Dados</button>
+            <div class="two fields">
+                <div class="field">
+                    <label>Documento</label>
+                    <input type="text" id="documento" required>
+                </div>
+                <div class="field">
+                    <label>Email</label>
+                    <input type="email" id="email">
+                </div>
             </div>
+            <div class="three fields">
+                <div class="field">
+                    <label>CEP</label>
+                    <input type="text" id="cep">
+                </div>
+                <div class="field">
+                    <label>Endereço</label>
+                    <input type="text" id="endereco">
+                </div>
+                <div class="field">
+                    <label>Número</label>
+                    <input type="text" id="numero">
+                </div>
+            </div>
+            <div class="three fields">
+                <div class="field">
+                    <label>Bairro</label>
+                    <input type="text" id="bairro">
+                </div>
+                <div class="field">
+                    <label>Cidade</label>
+                    <input type="text" id="cidade">
+                </div>
+                <div class="field">
+                    <label>Estado</label>
+                    <input type="text" id="estado">
+                </div>
+            </div>
+            <button class="ui green button" type="submit">
+                Salvar
+            </button>
         </form>
     </div>
-</div>
+    <!-- Modal -->
+    <div class="ui modal" id="modalLista">
+        <div class="header">Pessoas Cadastradas</div>
+        <div class="content">
+            <table class="ui celled table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Documento</th>
+                        <th>Email</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelaPessoas"></tbody>
+            </table>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.js"></script>
+    <script>
+        const API = "http://localhost:3000/pessoas";
 
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.js"></script>
+        // SALVAR OU EDITAR
+        document.getElementById("formPessoa").addEventListener("submit", async function (e) {
+            e.preventDefault();
+            const id = document.getElementById("id").value;
+            const documento = document.getElementById("documento").value.replace(/\D/g, '');
+            const payload = {
+                nome_razao_social: document.getElementById("nome_razao_social").value,
+                nome_social_fantasia: document.getElementById("nome_social_fantasia").value,
+                documento: documento,
+                tipo: documento.length > 11 ? "CNPJ" : "CPF",
+                email: document.getElementById("email").value,
+                cep: document.getElementById("cep").value.replace(/\D/g, ''),
+                endereco: document.getElementById("endereco").value,
+                numero: document.getElementById("numero").value,
+                bairro: document.getElementById("bairro").value,
+                cidade: document.getElementById("cidade").value,
+                estado: document.getElementById("estado").value,
+                pais: "Brasil"
+            };
+            try {
+                let res;
 
-<script>
-    const API_URL = 'http://localhost:3000/produtos';
-
-    // Controles dos Modais
-    function abrirModalEstoque() { 
-        $('#modalEstoque').modal({
-            blurring: true,
-            onShow: function() { carregarProdutos(); }
-        }).modal('show'); 
-    }
-    
-    function fecharModalEstoque() { $('#modalEstoque').modal('hide'); }
-    function fecharModalEdicao() { $('#modalEdicao').modal('hide'); }
-
-    function limparFormulario() {
-        document.getElementById('formProduto').reset();
-        document.getElementById('produto_id').value = '';
-    }
-
-    // ENVIO DO FORMULÁRIO DE CADASTRO (DA TELA)
-    document.getElementById('formProduto').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const payload = {
-            nome: document.getElementById('nome').value,
-            categoria: document.getElementById('categoria').value,
-            descricao: document.getElementById('descricao').value,
-            preco: document.getElementById('preco').value,
-            estoque: document.getElementById('estoque').value
-        };
-        executarEnvio(API_URL, 'POST', payload);
-    });
-
-    // ENVIO DO FORMULÁRIO DE EDIÇÃO (DO MODAL)
-    document.getElementById('formProdutoEdicao').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const id = document.getElementById('edit_produto_id').value;
-        const payload = {
-            nome: document.getElementById('edit_nome').value,
-            categoria: document.getElementById('edit_categoria').value,
-            descricao: document.getElementById('edit_descricao').value,
-            preco: document.getElementById('edit_preco').value,
-            estoque: document.getElementById('edit_estoque').value
-        };
-        
-        await executarEnvio(`${API_URL}/${id}`, 'PUT', payload);
-        fecharModalEdicao();
-        carregarProdutos(); // Recarrega os dados na tabela que está por baixo
-    });
-
-    // Função genérica para tratar os envios HTTP
-    async function executarEnvio(url, method, payload) {
-        try {
-            const res = await fetch(url, {
-                method: method,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
+                if (id) {
+                    res = await fetch(`${API}/${id}`, {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(payload)
+                    });
+                } else {
+                    res = await fetch(API, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(payload)
+                    });
+                }
+                if (res.ok) {
+                    alert("Salvo com sucesso");
+                    limparFormulario();
+                    carregarPessoas();
+                } else {
+                    alert("Erro ao salvar");
+                }
+            } catch (err) {
+                alert("Erro no servidor");
+            }
+        });
+        // LISTAR
+        async function carregarPessoas() {
+            const res = await fetch(API);
+            const dados = await res.json();
+            const tabela = document.getElementById("tabelaPessoas");
+            tabela.innerHTML = "";
+            dados.forEach(pessoa => {
+                tabela.innerHTML += `
+            <tr>
+                <td>${pessoa.id}</td>
+                <td>${pessoa.nome_razao_social}</td>
+                <td>${pessoa.documento}</td>
+                <td>${pessoa.email || '-'}</td>
+                <td>
+                    <button class="ui yellow button"
+                        onclick="editarPessoa(${pessoa.id})">
+                        Editar
+                    </button>
+                    <button class="ui red button"
+                        onclick="deletarPessoa(${pessoa.id})">
+                        Excluir
+                    </button>
+                </td>
+            </tr>
+        `;
+            });
+        }
+        // EDITAR
+        async function editarPessoa(id) {
+            const res = await fetch(API);
+            const dados = await res.json();
+            const pessoa = dados.find(p => p.id === id);
+            if (!pessoa) return;
+            document.getElementById("id").value = pessoa.id;
+            document.getElementById("nome_razao_social").value = pessoa.nome_razao_social;
+            document.getElementById("nome_social_fantasia").value = pessoa.nome_social_fantasia || "";
+            document.getElementById("documento").value = pessoa.documento;
+            document.getElementById("email").value = pessoa.email || "";
+            document.getElementById("cep").value = pessoa.cep || "";
+            document.getElementById("endereco").value = pessoa.endereco || "";
+            document.getElementById("numero").value = pessoa.numero || "";
+            document.getElementById("bairro").value = pessoa.bairro || "";
+            document.getElementById("cidade").value = pessoa.cidade || "";
+            document.getElementById("estado").value = pessoa.estado || "";
+            $('#modalLista').modal('hide');
+        }
+        // EXCLUIR
+        async function deletarPessoa(id) {
+            if (!confirm("Deseja excluir?")) return;
+            const res = await fetch(`${API}/${id}`, {
+                method: "DELETE"
             });
             if (res.ok) {
-                alert('Operação realizada com sucesso no MySQL!');
-                limparFormulario();
-            } else {
-                alert('Erro ao salvar informações no banco.');
+                carregarPessoas();
             }
-        } catch (err) { alert('Erro de conexão com o servidor.'); }
-    }
-
-    // LISTAR PRODUTOS NA TABELA DO MODAL
-    async function carregarProdutos() {
-        const tabela = document.getElementById('tabelaProdutos');
-        if (!tabela) return;
-        
-        try {
-            const res = await fetch(API_URL);
-            const dados = await res.json();
-            tabela.innerHTML = '';
-            
-            if (dados.length === 0) {
-                tabela.innerHTML = '<tr><td colspan="6" class="center aligned">Estoque vazio.</td></tr>';
-                return;
-            }
-            
-            dados.forEach(p => {
-                // Passando o ID correto vindo da coluna "p.id" do banco
-                tabela.innerHTML += `
-                    <tr>
-                        <td>${p.id}</td>
-                        <td><strong>${p.nome}</strong><br><small>${p.descricao}</small></td>
-                        <td>${p.categoria || '---'}</td>
-                        <td>R$ ${p.preco ? parseFloat(p.preco).toFixed(2) : '0.00'}</td>
-                        <td>${p.estoque || 0} u.</td>
-                        <td class="center aligned">
-                            <button class="ui tiny yellow icon button" onclick="abrirEdicaoNoModal(${p.id})">
-                                <i class="edit icon"></i>
-                            </button>
-                            <button class="ui tiny red icon button" onclick="deletarProduto(${p.id})">
-                                <i class="trash icon"></i>
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            });
-        } catch (err) { tabela.innerHTML = '<tr><td colspan="6">Erro ao carregar dados.</td></tr>'; }
-    }
-
-    // BUSCA O ITEM E ABRE O MODAL DE EDIÇÃO
-    async function abrirEdicaoNoModal(id) {
-        console.log(`Buscando produto ID ${id} para abrir no modal de edição...`);
-        try {
-            const res = await fetch(API_URL);
-            const dados = await res.json();
-            const p = dados.find(prod => prod.id === id);
-            
-            if (p) {
-                // Preenche os campos exclusivos do Modal de Edição
-                document.getElementById('edit_produto_id').value = p.id;
-                document.getElementById('edit_nome').value = p.nome;
-                document.getElementById('edit_categoria').value = p.categoria || '';
-                document.getElementById('edit_descricao').value = p.descricao;
-                document.getElementById('edit_preco').value = p.preco || '';
-                document.getElementById('edit_estoque').value = p.estoque || '';
-                
-                // Abre o modal de Edição por cima do outro
-                $('#modalEdicao').modal({ blurring: true }).modal('show');
-            } else {
-                alert('Produto não localizado.');
-            }
-        } catch(err) { alert('Erro ao processar a edição.'); }
-    }
-
-    // EXCLUIR PRODUTO
-    async function deletarProduto(id) {
-        if(!confirm('Deseja remover este produto?')) return;
-        try {
-            const res = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
-            if(res.ok) carregarProdutos();
-        } catch (err) { alert('Erro na conexão.'); }
-    }
-</script>
+        }
+        // MODAL
+        function abrirModal() {
+            carregarPessoas();
+            $('#modalLista').modal('show');
+        }
+        // LIMPAR
+        function limparFormulario() {
+            document.getElementById("formPessoa").reset();
+            document.getElementById("id").value = "";
+        }
+    </script>
 </body>
 </html>

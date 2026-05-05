@@ -1,3 +1,27 @@
+<<<<<<< HEAD
+-- Criação do banco de dados
+CREATE DATABASE IF NOT EXISTS exemplos;
+USE exemplos;
+
+-- Criação da tabela pessoa
+CREATE TABLE IF NOT EXISTS pessoa (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome_razao_social VARCHAR(255) NOT NULL,
+    nome_social_fantasia VARCHAR(255),
+    cep CHAR(8),
+    endereco VARCHAR(255),
+    numero VARCHAR(20),
+    bairro VARCHAR(100),
+    cidade VARCHAR(100),
+    estado CHAR(2),
+    pais VARCHAR(50) DEFAULT 'Brasil',
+    documento VARCHAR(14) NOT NULL,
+    tipo ENUM('CPF', 'CNPJ') NOT NULL,
+    email VARCHAR(150),
+    data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (documento)
+);
+=======
 -- --------------------------------------------------------
 -- Servidor:                     127.0.0.1
 -- Versão do servidor:           10.4.32-MariaDB - mariadb.org binary distribution
@@ -49,3 +73,4 @@ DELETE FROM `pessoas`;
 /*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40111 SET SQL_NOTES=IFNULL(@OLD_SQL_NOTES, 1) */;
+>>>>>>> 95fd8cc4e9e1dd7b5f3102196b7303b5a876c508
