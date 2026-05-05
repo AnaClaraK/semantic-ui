@@ -316,24 +316,24 @@
         }
    
         const payload = {
-    nome_razao_social: document.getElementById('nome_razao_social').value,
-    nome_social_fantasia: document.getElementById('nome_social_fantasia').value || null,
+            nome_razao_social: document.getElementById('nome_razao_social').value,
+            nome_social_fantasia: document.getElementById('nome_social_fantasia').value || null,
 
-    documento: docLimpo,
-    tipo: docLimpo.length > 11 ? "CNPJ" : "CPF",
+            documento: docLimpo,
+            tipo: docLimpo.length > 11 ? "CNPJ" : "CPF",
 
-    cep: inputCep.value.replace(/\D/g, "") || null,
-    endereco: document.getElementById('endereco').value || null,
-    numero: document.getElementById('numero').value || null,
+            cep: inputCep.value.replace(/\D/g, "") || null,
+            endereco: document.getElementById('endereco').value || null,
+            numero: document.getElementById('numero').value || null,
 
-    bairro: document.getElementById('bairro').value || null,
-    cidade: document.getElementById('cidade').value || null,
-    estado: document.getElementById('estado').value || null,
+            bairro: document.getElementById('bairro').value || null,
+            cidade: document.getElementById('cidade').value || null,
+            estado: document.getElementById('estado').value || null,
 
-    pais: "Brasil",
+            pais: "Brasil",
 
-    email: inputEmail.value || null
-};
+            email: inputEmail.value || null
+        };
         try {
             const url = pessoaEditandoId 
                 ? `${API_URL}/${pessoaEditandoId}` 
