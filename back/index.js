@@ -299,3 +299,19 @@ const PORT = 3000;
 app.listen(PORT, () => {
     console.log(`🚀 Servidor rodando em http://localhost:${PORT}`);
 });
+
+
+app.post('/inserircliente', async (req, res) => {
+    const { nome, telefone, horario, servicofeito, preco } = req.body;
+    const query = `INSERT INTO clientes (nome, telefone, horario, servicofeito, preco) VALUES (?, ?, ?, ?, ?)`;
+    const values = [nome, telefone, horario, servicofeito, Number(preco)];
+
+    try {
+        const [result] = await pool.execute(query, values);
+        res.status(201).json({ id: result.insertId, ...req.body });
+        
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: error.message });
+    }
+});
