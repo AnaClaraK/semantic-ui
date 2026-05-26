@@ -8,10 +8,13 @@ const pool = require("./db.js");
 app.use(cors());
 app.use(express.json());
 
+<<<<<<< HEAD
 app.use(express.static('public'));
 
 
 
+=======
+>>>>>>> 02b810de5fc5fc6958a59de05385f044efeb83f4
 pool.getConnection()
     .then(connection => {
         console.log('✅ Conexão com o banco de dados MySQL estabelecida com sucesso!');
@@ -201,6 +204,7 @@ app.delete('/produtos/:id', async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
+<<<<<<< HEAD
 app.post('/funcionarios', async (req, res) => {
     const { 
         nome, cargo, telefone, especialidade, comissao_percentual, data_admissao 
@@ -244,6 +248,53 @@ app.get('/funcionarios', async (req, res) => {
 });
 
 // Inicialização
+=======
+//agendamento
+console.log("ROTA AGENDAMENTO CARREGADA");
+app.post('/agendamento', async (req, res) => {
+    const {
+        nome_cliente,
+        telefone,
+        servico,
+        profissional,
+        data_agendamento,
+        horario
+    } = req.body;
+    try {
+        const query = `
+            INSERT INTO agendamentos
+            (
+                nome_cliente,
+                telefone,
+                servico,
+                profissional,
+                data_agendamento,
+                horario
+            )
+            VALUES (?, ?, ?, ?, ?, ?)
+        `;
+        const values = [
+            nome_cliente,
+            telefone,
+            servico,
+            profissional,
+            data_agendamento,
+            horario
+        ];
+        const [result] = await pool.execute(query, values);
+        res.status(201).json({
+            message: "Agendamento realizado com sucesso!",
+            id: result.insertId
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            erro: error.message
+        });
+    }
+});
+// APP.LISTEN TEM QUE SER O ÚLTIMO
+>>>>>>> 02b810de5fc5fc6958a59de05385f044efeb83f4
 const PORT = 3000;
 app.listen(PORT, () => {
     console.log(`🚀 Servidor rodando em http://localhost:${PORT}`);
