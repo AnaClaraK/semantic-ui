@@ -8,10 +8,6 @@ const pool = require("./db.js");
 app.use(cors());
 app.use(express.json());
 
-
-
-
-
 pool.getConnection()
     .then(connection => {
         console.log('✅ Conexão com o banco de dados MySQL estabelecida com sucesso!');
@@ -201,8 +197,8 @@ app.delete('/produtos/:id', async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
+//agendamento
 console.log("ROTA AGENDAMENTO CARREGADA");
-// ROTA POST - AGENDAR HORÁRIO
 app.post('/agendamento', async (req, res) => {
     const {
         nome_cliente,
@@ -245,11 +241,7 @@ app.post('/agendamento', async (req, res) => {
         });
     }
 });
-// TESTE
-app.get('/teste', (req, res) => {
-    res.send('FUNCIONANDO');
-});
-// INICIALIZAÇÃO
+// APP.LISTEN TEM QUE SER O ÚLTIMO
 const PORT = 3000;
 app.listen(PORT, () => {
     console.log(`🚀 Servidor rodando em http://localhost:${PORT}`);
