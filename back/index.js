@@ -23,7 +23,7 @@ pool.getConnection()
     });
 
 // Rota GET - Listar todos
-app.get('/pessoas', async (req, res) => {
+app.get('/pessoa', async (req, res) => {
     try {
         const [rows] = await pool.execute('SELECT * FROM pessoa');
         res.json(rows);
@@ -42,8 +42,8 @@ app.get('/produtos', async (req, res) => {
     }
 });
 
-// Rota POST - Criar - PESSOAS
-app.post('/pessoas', async (req, res) => {
+// Rota POST - Criar - pessoa
+app.post('/pessoa', async (req, res) => {
     const { 
         nome_razao_social, nome_social_fantasia, cep, endereco, 
         numero, bairro, cidade, estado, pais, documento, tipo, email 
@@ -107,7 +107,7 @@ app.post('/produtos', async (req, res) => {
 });
 
 // Rota PUT - Atualizar
-app.put('/pessoas/:id', async (req, res) => {
+app.put('/pessoa/:id', async (req, res) => {
     const { id } = req.params;
     const { 
         nome_razao_social, nome_social_fantasia, cep, endereco, 
@@ -171,7 +171,7 @@ app.put('/produtos/:id', async (req, res) => {
 });
 
 // Rota DELETE - Remover
-app.delete('/pessoas/:id', async (req, res) => {
+app.delete('/pessoa/:id', async (req, res) => {
     const { id } = req.params;
 
     try {
@@ -206,4 +206,20 @@ app.delete('/produtos/:id', async (req, res) => {
 const PORT = 3000;
 app.listen(PORT, () => {
     console.log(`🚀 Servidor rodando em http://localhost:${PORT}`);
+});
+
+
+app.post('/inserircliente', async (req, res) => {
+    const { nome, telefone, horario, servicofeito, preco } = req.body;
+    const query = `INSERT INTO clientes (nome, telefone, horario, servicofeito, preco) VALUES (?, ?, ?, ?, ?)`;
+    const values = [nome, telefone, horario, servicofeito, Number(preco)];
+
+    try {
+        const [result] = await pool.execute(query, values);
+        res.status(201).json({ id: result.insertId, ...req.body });
+        
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: error.message });
+    }
 });
