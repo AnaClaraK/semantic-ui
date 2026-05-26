@@ -1,8 +1,9 @@
 const express = require('express')
 const router = express.Router()
+const pessoaController = require ('../controlers/pessoasController');
 
-router.get('/', (req, res) => {
-    res.send('rota funcionando')
-})
+router.get('/pessoas', pessoasController.index)
+router.delete('pessoas/:id',pessoaController)
+
 
 module.exports = router
