@@ -1,28 +1,69 @@
-const Pessoa = require('../models/pessoasModel');
+const produtos = require('../models/produtosModel');
 
-const pessoaController = {
-    index: async (req, res) =>{
+const produtosController = {
+
+    index: async (req, res) => {
+
         try {
-            const pessoa = await Pessoa.ListarTodos();
-            res.json(pessoa);
 
-        }catch (error) {
-            res.status(500).json({error:error.message})
-        }
-    },
-    delete: async(req,res) =>{
-        const {id} = req.params;
-        try {
-            const affectedRows = await Pessoa.deletar(id)
-            if (affectedRows === 0){
-                return res.status(404).json({mensagem:"registro não encontradi"})
+            const lista = await produtos.listarTodos();
 
-            }
-            res.status(204).send()
+            res.json(lista);
+
         } catch (error) {
-            res.status(500).json({error:error.message})
+
+            res.status(500).json({
+                error: error.message
+            });
+
         }
     },
+
+    create: async (req, res) => {
+
+        try {
+
+            const resultado = await produtos.cadastrar(req.body);
+
+            res.status(201).json({
+                mensagem: "Produto cadastrado",
+                resultado
+            });
+
+        } catch (error) {
+
+            res.status(500).json({
+                error: error.message
+            });
+
+        }
+    },
+
+    delete: async (req, res) => {
+
+        const { id } = req.params;
+
+        try {
+
+            const affectedRows = await produtos.deletar(id);
+
+            if (affectedRows === 0) {
+
+                return res.status(404).json({
+                    mensagem: "Produto não encontrado"
+                });
+            }
+
+            res.status(204).send();
+
+        } catch (error) {
+
+            res.status(500).json({
+                error: error.message
+            });
+
+        }
+    }
 }
 
-module.exports = pessoaController;
+module.exports = produtosController;
