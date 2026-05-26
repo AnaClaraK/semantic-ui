@@ -1,10 +1,16 @@
-const express = require('express')
-const router = express.Router()
-const produtosController = require ('../controller/produtosController.js')
+const express = require('express');
 
+const router = express.Router();
 
-router.get('/', (req, res) => {
-    res.send('rota funcionando')
-})
+const produtosController = require('../controllers/produtosController');
 
-module.exports = router
+// LISTAR
+router.get('/produto', produtosController.index);
+
+// CADASTRAR
+router.post('/produto', produtosController.create);
+
+// DELETAR
+router.delete('/produto/:id', produtosController.delete);
+
+module.exports = router;

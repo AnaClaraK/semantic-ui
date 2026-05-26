@@ -1,24 +1,73 @@
+const produtos = require('../models/produtosModel');
+
 const produtosController = {
-    index: async (req, res) =>{
+
+    // LISTAR
+    index: async (req, res) => {
+
         try {
-            const pessoa = await Pessoa.listarTodos();
-            res.json(pessoa);
+
+            const lista = await produtos.listarTodos();
+
+            res.json(lista);
 
         } catch (error) {
-            res.status(500).json({error:error.mensagem})
+
+            res.status(500).json({
+                error: error.message
+            });
+
         }
     },
-    delete: async(req,res) =>{
-        const {id} = req.params;
+
+    // CADASTRAR
+    create: async (req, res) => {
+
         try {
-            const affectedRows = await produtosController.deleter(id)
-            if (affectedRows === 0){
-                return res.status(404).json({mensagem:"registro não encontradi"})
+
+            const resultado = await produtos.cadastrar(req.body);
+
+            res.status(201).json({
+                mensagem: "Produto cadastrado",
+                resultado
+            });
+
+        } catch (error) {
+
+            res.status(500).json({
+                error: error.message
+            });
+
+        }
+    },
+
+    // DELETAR
+    delete: async (req, res) => {
+
+        const { id } = req.params;
+
+        try {
+
+            const affectedRows = await produtos.deletar(id);
+
+            if (affectedRows === 0) {
+
+                return res.status(404).json({
+                    mensagem: "Produto não encontrado"
+                });
 
             }
-            res.status(204).send()
+
+            res.status(204).send();
+
         } catch (error) {
-            res.status(500).json({error:error.mensagem})
+
+            res.status(500).json({
+                error: error.message
+            });
+
         }
-    },
+    }
 }
+
+module.exports = produtosController;
