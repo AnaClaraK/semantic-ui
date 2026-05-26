@@ -8,7 +8,7 @@ const pool = mysql.createPool({
     user:process.env.DB_USER,
     password:process.env.DB_PASS,
     port:process.env.DB_PASS,
-    database:process.eventNames.DB_NAME,
+    database:process.env.DB_NAME,
   
 })
 //exportando o arquivo db como um módulo
