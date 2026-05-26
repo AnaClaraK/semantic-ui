@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Cadastro de Pessoas</title>
+    <title>Cadastro de pessoa</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.css">
     <style>
         body {
@@ -22,7 +22,7 @@
 <body>
     <div class="container-box">
         <h2 class="ui header">
-            Cadastro de Pessoas
+            Cadastro de pessoa
         </h2>
         <button class="ui blue button" onclick="abrirModal()">
             Ver Cadastros
@@ -87,7 +87,7 @@
     </div>
     <!-- Modal -->
     <div class="ui modal" id="modalLista">
-        <div class="header">Pessoas Cadastradas</div>
+        <div class="header">pessoa Cadastradas</div>
         <div class="content">
             <table class="ui celled table">
                 <thead>
@@ -99,14 +99,14 @@
                         <th>Ações</th>
                     </tr>
                 </thead>
-                <tbody id="tabelaPessoas"></tbody>
+                <tbody id="tabelapessoa"></tbody>
             </table>
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.js"></script>
     <script>
-        const API = "http://localhost:3000/pessoas";
+        const API = "http://localhost:3000/pessoa";
 
         // SALVAR OU EDITAR
         document.getElementById("formPessoa").addEventListener("submit", async function (e) {
@@ -150,7 +150,7 @@
                 if (res.ok) {
                     alert("Salvo com sucesso");
                     limparFormulario();
-                    carregarPessoas();
+                    carregarpessoa();
                 } else {
                     alert("Erro ao salvar");
                 }
@@ -159,10 +159,10 @@
             }
         });
         // LISTAR
-        async function carregarPessoas() {
+        async function carregarpessoa() {
             const res = await fetch(API);
             const dados = await res.json();
-            const tabela = document.getElementById("tabelaPessoas");
+            const tabela = document.getElementById("tabelapessoa");
             tabela.innerHTML = "";
             dados.forEach(pessoa => {
                 tabela.innerHTML += `
@@ -211,12 +211,12 @@
                 method: "DELETE"
             });
             if (res.ok) {
-                carregarPessoas();
+                carregarpessoa();
             }
         }
         // MODAL
         function abrirModal() {
-            carregarPessoas();
+            carregarpessoa();
             $('#modalLista').modal('show');
         }
         // LIMPAR

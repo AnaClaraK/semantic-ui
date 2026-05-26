@@ -179,7 +179,7 @@
                     <th class="right aligned">Ações</th>
                 </tr>
             </thead>
-            <tbody id="tabelaPessoas"></tbody>
+            <tbody id="tabelapessoa"></tbody>
         </table>
     </div>
 </div>
@@ -188,7 +188,7 @@
 <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.js"></script>
 
 <script>
-    const API_URL = 'http://localhost:3000/pessoas';
+    const API_URL = 'http://localhost:3000/pessoa';
     let pessoaEditandoId = null;
 
     // Elementos (com proteção pra não quebrar)
@@ -196,7 +196,7 @@
     const inputDocumento = document.getElementById('documento');
     const inputCep = document.getElementById('cep');
     const inputEmail = document.getElementById('email');
-    const tabela = document.getElementById('tabelaPessoas');
+    const tabela = document.getElementById('tabelapessoa');
     const modal = document.getElementById('modalPesquisa');
    
     // ================= VALIDAÇÕES =================
@@ -361,7 +361,7 @@
    
     // ================= LISTAR =================
    
-    async function carregarPessoas() {
+    async function carregarpessoa() {
         const res = await fetch(API_URL);
         const data = await res.json();
    
@@ -410,7 +410,7 @@
         if (!confirm("Excluir?")) return;
    
         await fetch(`${API_URL}/${id}`, { method: "DELETE" });
-        carregarPessoas();
+        carregarpessoa();
     }
    
     // ================= UI =================
@@ -421,7 +421,7 @@
    
     function abrirModal() {
         $('.ui.modal').modal('show');
-        carregarPessoas();
+        carregarpessoa();
     }
    
     function fecharModal() {

@@ -20,9 +20,9 @@ DROP DATABASE IF EXISTS `exemplos`;
 CREATE DATABASE IF NOT EXISTS `exemplos` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci */;
 USE `exemplos`;
 
--- Copiando estrutura para tabela exemplos.pessoas
-DROP TABLE IF EXISTS `pessoas`;
-CREATE TABLE IF NOT EXISTS `pessoas` (
+-- Copiando estrutura para tabela exemplos.pessoa
+DROP TABLE IF EXISTS `pessoa`;
+CREATE TABLE IF NOT EXISTS `pessoa` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `nome_razao_social` varchar(255) NOT NULL,
   `nome_social_fantasia` varchar(255) DEFAULT NULL,
@@ -41,9 +41,9 @@ CREATE TABLE IF NOT EXISTS `pessoas` (
   UNIQUE KEY `documento` (`documento`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Copiando dados para a tabela exemplos.pessoas: ~0 rows (aproximadamente)
-DELETE FROM `pessoas`;
-INSERT INTO `pessoas` (`id`, `nome_razao_social`, `nome_social_fantasia`, `cep`, `endereco`, `numero`, `bairro`, `cidade`, `estado`, `pais`, `documento`, `tipo`, `email`, `data_cadastro`) VALUES
+-- Copiando dados para a tabela exemplos.pessoa: ~0 rows (aproximadamente)
+DELETE FROM `pessoa`;
+INSERT INTO `pessoa` (`id`, `nome_razao_social`, `nome_social_fantasia`, `cep`, `endereco`, `numero`, `bairro`, `cidade`, `estado`, `pais`, `documento`, `tipo`, `email`, `data_cadastro`) VALUES
 	(2, 'Ana Clara Cação da Cruz', NULL, '19033440', 'Rua Lúcia Angélica', '170', 'Vila Angélica', 'Presidente Prudente', 'SP', 'Brasil', '50572398808', 'CPF', 'clarinhakassao@gmail.com', '2026-05-05 11:30:52');
 
 -- Copiando estrutura para tabela exemplos.produtos
