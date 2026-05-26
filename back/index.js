@@ -25,7 +25,7 @@ pool.getConnection()
 // Rota GET - Listar todos
 app.get('/pessoas', async (req, res) => {
     try {
-        const [rows] = await pool.execute('SELECT * FROM pessoa');
+        const [rows] = await pool.execute('SELECT * FROM pessoas');
         res.json(rows);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -50,7 +50,7 @@ app.post('/pessoas', async (req, res) => {
     } = req.body;
 
     const query = `
-        INSERT INTO pessoa 
+        INSERT INTO pessoas
         (nome_razao_social, nome_social_fantasia, cep, endereco, numero, bairro, cidade, estado, pais, documento, tipo, email) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
@@ -115,7 +115,7 @@ app.put('/pessoas/:id', async (req, res) => {
     } = req.body;
 
     const query = `
-        UPDATE pessoa 
+        UPDATE pessoas 
         SET nome_razao_social = ?, nome_social_fantasia = ?, cep = ?, endereco = ?, 
             numero = ?, bairro = ?, cidade = ?, estado = ?, pais = ?, documento = ?, 
             tipo = ?, email = ? 
@@ -175,7 +175,7 @@ app.delete('/pessoas/:id', async (req, res) => {
     const { id } = req.params;
 
     try {
-        const [result] = await pool.execute('DELETE FROM pessoa WHERE id = ?', [id]);
+        const [result] = await pool.execute('DELETE FROM pessoas WHERE id = ?', [id]);
 
         if (result.affectedRows === 0) {
             return res.status(404).json({ message: 'Registro não encontrado' });
