@@ -1,10 +1,8 @@
-const express = require('express')
-const router = express.Router()
-const produtosController = require ('../controller/produtosController.js')
+const express = require('express');
+const router = express.Router();
+const produtosController = require('../controllers/produtosController.js'); // corrigido para plural 'controllers'
 
+router.get('/produtos', produtosController.index);
+router.delete('/produtos/:id', produtosController.delete);
 
-router.get('/', (req, res) => {
-    res.send('rota funcionando')
-})
-
-module.exports = router
+module.exports = router;

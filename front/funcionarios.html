@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700&display=swap" rel="stylesheet">
+   
+    <title>Cadastro de Funcionários</title>
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --accent-color: #f43f5e;
+            --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        body {
+            background: var(--bg-gradient);
+            font-family: 'Plus Jakarta Sans', sans-serif !important;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+
+        .main-container {
+            max-width: 850px;
+            margin: auto;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 24px;
+            border: 2px solid var(--primary-color);
+            box-shadow: 10px 10px 0px #000;
+        }
+
+        .ui.button.custom-primary {
+            background-color: var(--primary-color) !important;
+            color: white !important;
+            border-radius: 12px !important;
+            transition: transform 0.2s ease;
+            border: 2px solid #000 !important;
+        }
+
+        .ui.button.custom-primary:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 4px 4px 0px #000;
+        }
+
+        .ui.form input:not([type="submit"]):not([type="hidden"]) {
+            border: 2px solid #333 !important;
+            border-radius: 10px !important;
+            padding: 12px !important;
+        }
+
+        .ui.form input:focus {
+            border-color: var(--primary-color) !important;
+            background: #f8fafc !important;
+        }
+
+        .ui.header { font-weight: 700 !important; letter-spacing: -1px; }
+
+        .ui.table { border: 2px solid #000 !important; border-radius: 15px !important; overflow: hidden; }
+
+        /* FIX: ícone alinhado */
+        .ui.left.icon.input i.icon {
+            display: flex;
+            align-items: center;
+            height: 100%;
+            top: 0;
+            transform: translateY(0);
+        }
+
+        .ui.left.icon.input input {
+            padding-left: 2.6em !important;
+        }
+
+        .ui.buttons .or {
+            background: transparent;
+            border: none;
+            font-weight: 600;
+            color: #666;
+            margin: 0 10px;
+            position: static;
+            box-shadow: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="ui container main-container">
+    <div class="ui grid middle aligned">
+        <div class="column">
+            <h1 class="ui header">
+                <span style="color: var(--primary-color)">#</span> Registro de Funcionário
+                <div class="sub header">Gerencie a equipe e especialistas do salão de cabelo.</div>
+            </h1>
+        </div>
+    </div>
+   
+    <div class="ui divider" style="border-top: 2px solid #000; opacity: 0.1;"></div>
+
+    <div class="ui buttons" style="margin-bottom: 25px; display:flex; align-items:center; gap:10px;">
+        <button class="ui custom-primary button" onclick="abrirModal()">
+            <i class="search icon"></i> Explorar Funcionários
+        </button>
+        <button class="ui black button" style="border-radius: 12px; border: 2px solid #000;" onclick="limparFormulario()">
+            Limpar Campos
+        </button>
+    </div>
+
+    <form class="ui form" id="formFuncionario">
+        <div class="two fields">
+            <div class="field">
+                <label>Nome Completo</label>
+                <input type="text" id="nome" placeholder="Ex: Rodrigo Silva" required>
+            </div>
+            <div class="field">
+                <label>Cargo</label>
+                <input type="text" id="cargo" placeholder="Ex: Cabeleireiro, Assistente" required>
+            </div>
+        </div>
+
+        <div class="two fields">
+            <div class="field">
+                <label>Telefone / WhatsApp</label>
+                <div class="ui left icon input">
+                    <i class="whatsapp icon" style="color: #25D366"></i>
+                    <input type="text" id="telefone" placeholder="(11) 99999-0000">
+                </div>
+            </div>
+            <div class="field">
+                <label>Especialidade Principal</label>
+                <input type="text" id="especialidade" placeholder="Ex: Mechas, Cortes, Escovista">
+            </div>
+        </div>
+
+        <div class="ui segment" style="background: #f1f5f9; border: none; border-radius: 15px;">
+             <h4 class="ui dividing header">Contrato e Finanças</h4>
+             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div class="field">
+                    <label>Comissão (%)</label>
+                    <div class="ui left icon input">
+                        <i class="percent icon" style="color: var(--primary-color)"></i>
+                        <input type="number" id="comissao_percentual" step="0.01" min="0" max="100" placeholder="Ex: 40.00">
+                    </div>
+                </div>
+                <div class="field">
+                    <label>Data de Admissão</label>
+                    <input type="date" id="data_admissao">
+                </div>
+             </div>
+        </div>
+
+        <button type="submit" class="ui fluid massive custom-primary button" style="margin-top: 20px;">
+            Concluir e Salvar Funcionário
+        </button>
+    </form>
+</div>
+
+<div class="ui modal" id="modalPesquisa" style="border: 2px solid #000; border-radius: 20px; box-shadow: 10px 10px 0px #000;">
+    <div class="header" style="background: #000; color: #fff; font-family: 'Plus Jakarta Sans', sans-serif;">
+         ✂️ Equipe do Salão
+    </div>
+    <div class="content" style="background: #f8fafc;">
+        <table class="ui celled selectable table">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Cargo</th>
+                    <th>Especialidade</th>
+                    <th>Comissão</th>
+                    <th class="center aligned">Ações</th>
+                </tr>
+            </thead>
+            <tbody id="tabelaFuncionario"></tbody>
+        </table>
+    </div>
+    <div class="actions" style="background: #f1f5f9; border-top: 1px solid #ddd;">
+        <button class="ui black button" style="border-radius: 10px; border: 2px solid #000;" onclick="fecharModal()">Fechar</button>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.js"></script>
+
+<script>
+    const API_URL = 'http://localhost:3000/funcionarios';
+    let funcionarioEditandoId = null;
+
+    const form = document.getElementById('formFuncionario');
+    const inputTelefone = document.getElementById('telefone');
+    const tabela = document.getElementById('tabelaFuncionario');
+
+    // MÁSCARA TELEFONE
+    inputTelefone.addEventListener('input', e => {
+        let v = e.target.value.replace(/\D/g, "");
+        v = v.replace(/^(\d{2})(\d)/g, "($1) $2");
+        v = v.replace(/(\d)(\d{4})$/, "$1-$2");
+        e.target.value = v;
+    });
+
+    // SUBMIT (SALVAR / ATUALIZAR)
+    form.addEventListener('submit', async e => {
+        e.preventDefault();
+
+        const payload = {
+            nome: document.getElementById('nome').value,
+            cargo: document.getElementById('cargo').value,
+            telefone: inputTelefone.value.replace(/\D/g, "") || null,
+            especialidade: document.getElementById('especialidade').value || "Geral",
+            comissao_percentual: parseFloat(document.getElementById('comissao_percentual').value) || 0.00,
+            data_admissao: document.getElementById('data_admissao').value || new Date().toISOString().slice(0, 10)
+        };
+
+        try {
+            const url = funcionarioEditandoId ? `${API_URL}/${funcionarioEditandoId}` : API_URL;
+            const metodo = funcionarioEditandoId ? "PUT" : "POST";
+
+            const res = await fetch(url, {
+                method: metodo,
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+
+            if (res.ok) {
+                alert("Funcionário salvo com sucesso!");
+                limparFormulario();
+                fecharModal();
+            } else {
+                alert("Erro ao salvar funcionário.");
+            }
+        } catch (err) {
+            alert("Erro de conexão com o servidor.");
+        }
+    });
+
+    // LISTAR FUNCIONÁRIOS (Corrigido com Classes do Semantic UI)
+    async function carregarFuncionarios() {
+        try {
+            const res = await fetch(API_URL);
+            const data = await res.json();
+
+            tabela.innerHTML = "";
+
+            data.forEach(f => {
+                // Tratamento caso a coluna no banco chame 'id' ou 'id_funcionario'
+                const idAtual = f.id_funcionario || f.id; 
+
+                tabela.innerHTML += `
+                    <tr>
+                        <td><b>${f.nome}</b></td>
+                        <td>${f.cargo}</td>
+                        <td><div class="ui horizontal purple label">${f.especialidade}</div></td>
+                        <td><i class="percent icon"></i>${f.comissao_percentual}</td>
+                        <td class="center aligned">
+                            <div class="ui buttons tiny">
+                                <button class="ui button primary" style="border: 1px solid #000;" onclick="editarFuncionario(${idAtual})">Editar</button>
+                                <div class="or" data-text="ou"></div>
+                                <button class="ui button negative" style="border: 1px solid #000;" onclick="deletarFuncionario(${idAtual})">Excluir</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+        } catch (error) {
+            console.error("Erro ao carregar funcionários:", error);
+        }
+    }
+
+    // PREPARAR EDIÇÃO
+    async function editarFuncionario(id) {
+        try {
+            const res = await fetch(API_URL);
+            const data = await res.json();
+            const f = data.find(x => (x.id_funcionario || x.id) === id);
+            
+            if (!f) return;
+
+            funcionarioEditandoId = id;
+
+            document.getElementById('nome').value = f.nome;
+            document.getElementById('cargo').value = f.cargo;
+            document.getElementById('telefone').value = f.telefone || '';
+            document.getElementById('especialidade').value = f.especialidade;
+            document.getElementById('comissao_percentual').value = f.comissao_percentual;
+            
+            if(f.data_admissao) {
+                document.getElementById('data_admissao').value = f.data_admissao.split('T')[0];
+            }
+
+            $('#modalPesquisa').modal('hide');
+        } catch (error) {
+            alert("Erro ao buscar dados do funcionário");
+        }
+    }
+
+    // DELETAR FUNCIONÁRIO
+    async function deletarFuncionario(id) {
+        if (!confirm("Deseja realmente remover este funcionário?")) return;
+
+        try {
+            await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+            carregarFuncionarios();
+        } catch (error) {
+            alert("Erro ao deletar funcionário.");
+        }
+    }
+
+    // OPERAÇÕES DA INTERFACE (UI)
+    function limparFormulario() {
+        form.reset();
+        funcionarioEditandoId = null;
+    }
+
+    function abrirModal() {
+        $('#modalPesquisa').modal('show');
+        carregarFuncionarios();
+    }
+
+    function fecharModal() {
+        $('#modalPesquisa').modal('hide');
+    }
+</script>
+
+</body>
+</html>

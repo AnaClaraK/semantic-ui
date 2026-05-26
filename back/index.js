@@ -8,7 +8,7 @@ const pool = require("./db.js");
 app.use(cors());
 app.use(express.json());
 
-
+app.use(express.static('public'));
 
 
 
@@ -197,6 +197,47 @@ app.delete('/produtos/:id', async (req, res) => {
             return res.status(404).json({ message: 'Registro de produto não encontrado' });
         }
         res.status(204).send();
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+app.post('/funcionarios', async (req, res) => {
+    const { 
+        nome, cargo, telefone, especialidade, comissao_percentual, data_admissao 
+    } = req.body;
+
+    // Validação simples obrigando pelo menos o nome e o cargo
+    if (!nome || !cargo) {
+        return res.status(400).json({ error: "Nome e Cargo são obrigatórios." });
+    }
+
+    const query = `
+        INSERT INTO funcionarios 
+        (nome, cargo, telefone, especialidade, comissao_percentual, data_admissao) 
+        VALUES (?, ?, ?, ?, ?, ?)
+    `;
+    
+    const values = [
+        nome, 
+        cargo, // Ex: 'Cabeleireiro', 'Assistente'
+        telefone || null, 
+        especialidade || 'Geral', // Ex: 'Colorimetria', 'Cortes', 'Escovas'
+        comissao_percentual || 0.00, // Ex: 40.00 para 40%
+        data_admissao || new Date().toISOString().slice(0, 10) // Pega a data de hoje se não enviar
+    ];
+
+    try {
+        const [result] = await pool.execute(query, values);
+        res.status(201).json({ id_funcionario: result.insertId, ...req.body });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.get('/funcionarios', async (req, res) => {
+    try {
+        const [rows] = await pool.execute('SELECT * FROM funcionarios');
+        res.json(rows);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
