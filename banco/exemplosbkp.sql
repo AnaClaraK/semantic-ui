@@ -2,7 +2,7 @@
 -- Servidor:                     127.0.0.1
 -- Versão do servidor:           10.4.32-MariaDB - mariadb.org binary distribution
 -- OS do Servidor:               Win64
--- HeidiSQL Versão:              12.15.0.7171
+-- HeidiSQL Versão:              12.10.0.7000
 -- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -16,11 +16,13 @@
 
 
 -- Copiando estrutura do banco de dados para exemplos
+DROP DATABASE IF EXISTS `exemplos`;
 CREATE DATABASE IF NOT EXISTS `exemplos` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci */;
 USE `exemplos`;
 
--- Copiando estrutura para tabela exemplos.pessoa
-CREATE TABLE IF NOT EXISTS `pessoa` (
+-- Copiando estrutura para tabela exemplos.pessoas
+DROP TABLE IF EXISTS `pessoas`;
+CREATE TABLE IF NOT EXISTS `pessoas` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `nome_razao_social` varchar(255) NOT NULL,
   `nome_social_fantasia` varchar(255) DEFAULT NULL,
@@ -37,12 +39,29 @@ CREATE TABLE IF NOT EXISTS `pessoa` (
   `data_cadastro` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   UNIQUE KEY `documento` (`documento`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Copiando dados para a tabela exemplos.pessoa: ~0 rows (aproximadamente)
-DELETE FROM `pessoa`;
-INSERT INTO `pessoa` (`id`, `nome_razao_social`, `nome_social_fantasia`, `cep`, `endereco`, `numero`, `bairro`, `cidade`, `estado`, `pais`, `documento`, `tipo`, `email`, `data_cadastro`) VALUES
-	(1, 'MICHELE CRISTINA VIEIRA DA SILVA', 'MICHELE CRISTINA VIEIRA DA SILVA', '19034735', 'Rua Elvira Locatelli Pardo', '11', 'Residencial Bela Vista I', 'Presidente Prudente', 'SP', 'Brasil', '31032392894', 'CPF', 'melissacgv1@gmail.com', '2026-04-30 18:06:28');
+-- Copiando dados para a tabela exemplos.pessoas: ~0 rows (aproximadamente)
+DELETE FROM `pessoas`;
+INSERT INTO `pessoas` (`id`, `nome_razao_social`, `nome_social_fantasia`, `cep`, `endereco`, `numero`, `bairro`, `cidade`, `estado`, `pais`, `documento`, `tipo`, `email`, `data_cadastro`) VALUES
+	(2, 'Ana Clara Cação da Cruz', NULL, '19033440', 'Rua Lúcia Angélica', '170', 'Vila Angélica', 'Presidente Prudente', 'SP', 'Brasil', '50572398808', 'CPF', 'clarinhakassao@gmail.com', '2026-05-05 11:30:52');
+
+-- Copiando estrutura para tabela exemplos.produtos
+DROP TABLE IF EXISTS `produtos`;
+CREATE TABLE IF NOT EXISTS `produtos` (
+  `id` int(11) NOT NULL,
+  `nome` varchar(100) NOT NULL,
+  `descricao` varchar(100) NOT NULL,
+  `preco` decimal(10,2) DEFAULT NULL,
+  `estoque` int(11) DEFAULT NULL,
+  `categoria` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Copiando dados para a tabela exemplos.produtos: ~0 rows (aproximadamente)
+DELETE FROM `produtos`;
+INSERT INTO `produtos` (`id`, `nome`, `descricao`, `preco`, `estoque`, `categoria`) VALUES
+	(0, 'teclado ak820', 'tecladinho legalzinho mas carinho', 285.00, 7, 'periféricos');
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
