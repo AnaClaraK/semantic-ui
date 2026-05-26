@@ -1,11 +1,279 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.css">
+
+  <title>Cadastro de Produtos</title>
+
+  <style>
+    body {
+      background: #f4f4f4;
+      padding: 30px;
+      font-family: Arial;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: auto;
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .ui.button {
+      margin-top: 10px;
+    }
+
+    table {
+      margin-top: 20px;
+    }
+  </style>
 </head>
 <body>
-    
+    <div class="container">
+
+        <h2>Cadastro de Produtos</h2>
+
+        <form class="ui form" id="formProdutos">
+
+            <div class="field">
+            <label>Nome do Produto</label>
+            <input type="text" id="nomeProduto" required>
+            </div>
+
+            <div class="field">
+            <label>Descrição</label>
+            <textarea id="descricao"></textarea>
+            </div>
+
+            <div class="field">
+            <label>Categoria</label>
+            <select id="categoria" class="ui dropdown">
+                <option value="">Selecione</option>
+                <option value="Shampoo">Shampoo</option>
+                <option value="Condicionador">Condicionador</option>
+                <option value="Máscara">Máscara</option>
+                <option value="Hidratação">Hidratação</option>
+                <option value="Finalização">Finalização</option>
+                <option value="Cachos">Cachos</option>
+                <option value="Coloração">Coloração</option>
+                <option value="Óleo Capilar">Óleo Capilar</option>
+                <option value="Tratamento">Tratamento</option>
+            </select>
+            </div>
+
+            <div class="two fields">
+
+            <div class="field">
+                <label>Preço</label>
+                <input type="number" id="preco" step="0.01">
+            </div>
+
+            <div class="field">
+                <label>Estoque</label>
+                <input type="number" id="estoque">
+            </div>
+
+            </div>
+
+            <div class="field">
+            <label>Status</label>
+
+            <select id="status" class="ui dropdown">
+                <option value="Disponível">Disponível</option>
+                <option value="Indisponível">Indisponível</option>
+            </select>
+            </div>
+
+            <button class="ui blue button" type="submit">
+            Salvar Produto
+            </button>
+
+            <button class="ui black button" type="button" onclick="listarProdutos()">
+            Listar Produtos
+            </button>
+
+        </form>
+
+        <table class="ui celled table">
+
+            <thead>
+            <tr>
+                <th>Produto</th>
+                <th>Categoria</th>
+                <th>Preço</th>
+                <th>Estoque</th>
+                <th>Status</th>
+                <th>Ações</th>
+            </tr>
+            </thead>
+
+            <tbody id="tabelaProdutos"></tbody>
+
+        </table>
+
+    </div>
 </body>
+
+<script>
+
+    const API_URL = "http://localhost:3000/produto";
+
+    let editandoId = null;
+
+    const form = document.getElementById("formProdutos");
+    const tabela = document.getElementById("tabelaProdutos");
+
+    // ================= SALVAR =================
+
+    form.addEventListener("submit", async (e) => {
+
+    e.preventDefault();
+
+    const payload = {
+
+        nomeProduto: document.getElementById("nomeProduto").value,
+
+        descricao: document.getElementById("descricao").value,
+
+        categoria: document.getElementById("categoria").value,
+
+        preco: document.getElementById("preco").value,
+
+        estoque: document.getElementById("estoque").value,
+
+        status: document.getElementById("status").value
+    };
+
+    const metodo = editandoId ? "PUT" : "POST";
+
+    const url = editandoId
+        ? `${API_URL}/${editandoId}`
+        : API_URL;
+
+    const res = await fetch(url, {
+
+        method: metodo,
+
+        headers: {
+        "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify(payload)
+    });
+
+    if (res.ok) {
+
+        alert("Produto salvo!");
+
+        form.reset();
+
+        editandoId = null;
+
+        listarProdutos();
+
+    } else {
+
+        alert("Erro ao salvar");
+    }
+
+    });
+
+    // ================= LISTAR =================
+
+    async function listarProdutos() {
+
+    const res = await fetch(API_URL);
+
+    const produtos = await res.json();
+
+    tabela.innerHTML = "";
+
+    produtos.forEach(produto => {
+
+        tabela.innerHTML += `
+
+        <tr>
+
+            <td>${produto.nomeProduto}</td>
+
+            <td>${produto.categoria}</td>
+
+            <td>R$ ${produto.preco}</td>
+
+            <td>${produto.estoque}</td>
+
+            <td>${produto.status}</td>
+
+            <td>
+
+            <button onclick="editarProduto(${produto.id_produto})">
+                Editar
+            </button>
+
+            <button onclick="excluirProduto(${produto.id_produto})">
+                Excluir
+            </button>
+
+            </td>
+
+        </tr>
+        `;
+
+    });
+
+    }
+
+    // ================= EDITAR =================
+
+    async function editarProduto(id) {
+
+    const res = await fetch(API_URL);
+
+    const produtos = await res.json();
+
+    const produto = produtos.find(p => p.id_produto == id);
+
+    editandoId = id;
+
+    document.getElementById("nomeProduto").value = produto.nomeProduto;
+
+    document.getElementById("descricao").value = produto.descricao;
+
+    document.getElementById("categoria").value = produto.categoria;
+
+    document.getElementById("preco").value = produto.preco;
+
+    document.getElementById("estoque").value = produto.estoque;
+
+    document.getElementById("status").value = produto.status;
+
+    }
+
+    // ================= EXCLUIR =================
+
+    async function excluirProduto(id) {
+
+    if (!confirm("Deseja excluir?")) return;
+
+    await fetch(`${API_URL}/${id}`, {
+        method: "DELETE"
+    });
+
+    listarProdutos();
+
+    }
+
+</script>
+
 </html>
