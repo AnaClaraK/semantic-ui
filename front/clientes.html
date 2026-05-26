@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Clientes</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h2>Cadastrar Cliente</h2>
+        
+        <form id="formCliente">
+            <div class="form-group">
+                <label for="nome">Nome Completo</label>
+                <input type="text" id="nome" required>
+            </div>
+
+            <div class="form-group">
+                <label for="telefone">Telefone / WhatsApp</label>
+                <input type="tel" id="telefone" required>
+            </div>
+
+            <div class="form-group">
+                <label for="horario">Data e Horário</label>
+                <input type="datetime-local" id="horario" required>
+            </div>
+
+            <div class="form-group">
+                <label for="servicofeito">Serviço a ser Feito</label>
+                <input type="text" id="servicofeito" required>
+            </div>
+
+            <div class="form-group">
+                <label for="preco">Preço (R$)</label>
+                <input type="number" id="preco" step="0.01" required>
+            </div>
+
+            <button type="submit">Salvar Agendamento</button>
+        </form>
+
+        <div id="mensagemStatus" class="message"></div>
+    </div>
+
+    <script>
+        const form = document.getElementById('formCliente');
+        const mensagemStatus = document.getElementById('mensagemStatus');
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const nome = document.getElementById('nome').value;
+            const telefone = document.getElementById('telefone').value;
+            const horarioInput = document.getElementById('horario').value;
+            
+            const horario = horarioInput.replace('T', ' ') + ':00'; 
+            
+            const servicofeito = document.getElementById('servicofeito').value;
+            const preco = document.getElementById('preco').value;
+
+            const dadosCliente = { nome, telefone, horario, servicofeito, preco: parseFloat(preco) };
+
+            try {
+                const response = await fetch('http://localhost:3000/inserircliente', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(dadosCliente)
+                });
+
+                if (response.ok) {
+                    const resultado = await response.json();
+                    mensagemStatus.textContent = `✅ Cliente cadastrado com sucesso! ID: ${resultado.id}`;
+                    mensagemStatus.style.color = '#04d361';
+                    mensagemStatus.style.display = 'block';
+                    form.reset();
+                } else {
+                    throw new Error('Falha no servidor ao cadastrar');
+                }
+            } catch (error) {
+                mensagemStatus.textContent = `❌ Erro ao conectar com o servidor: ${error.message}`;
+                mensagemStatus.style.color = '#f75a68';
+                mensagemStatus.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

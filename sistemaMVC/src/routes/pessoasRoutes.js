@@ -1,10 +1,9 @@
 const express = require('express')
 const router = express.Router()
-const pessoaController = require ('../controllers/pessoasController')
+const pessoaController = require ('../controlers/pessoasController');
 
+router.get('/pessoas', pessoasController.index)
+router.delete('pessoas/:id',pessoaController)
 
-
-router.get('/pessoa', pessoaController.index);
-router.delete('/pessoa/:id', pessoaController.delete)
 
 module.exports = router
