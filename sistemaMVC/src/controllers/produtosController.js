@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-// const Produto = require('../models/produtosModel'); // O ideal futuramente é criar esse model
 
 const produtosController = {
     index: async (req, res) => {
@@ -26,7 +24,6 @@ const produtosController = {
         }
     }
 };
-=======
 const produtos = require('../models/produtosModel');
 
 const produtosController = {
@@ -98,6 +95,5 @@ const produtosController = {
         }
     }
 }
->>>>>>> 02b810de5fc5fc6958a59de05385f044efeb83f4
 
 module.exports = produtosController;
