@@ -207,3 +207,45 @@ const PORT = 3000;
 app.listen(PORT, () => {
     console.log(`🚀 Servidor rodando em http://localhost:${PORT}`);
 });
+
+// ROTA POST - AGENDAR HORÁRIO
+app.post('/agendamentos', async (req, res) => {
+    const {
+        nome_cliente,
+        telefone,
+        servico,
+        profissional,
+        data_agendamento,
+        horario
+    } = req.body;
+    const query = `
+        INSERT INTO agendamentos
+        (
+            nome_cliente,
+            telefone,
+            servico,
+            profissional,
+            data_agendamento,
+            horario
+        )
+        VALUES (?, ?, ?, ?, ?, ?)
+    `;
+    const values = [
+        nome_cliente,
+        telefone,
+        servico,
+        profissional,
+        data_agendamento,
+        horario
+    ];
+    try {
+        const [result] = await pool.execute(query, values);
+        res.status(201).json({
+            message: 'Agendamento realizado com sucesso!',
+            id: result.insertId,
+            ...req.body
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
