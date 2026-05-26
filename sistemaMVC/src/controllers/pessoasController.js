@@ -63,7 +63,22 @@ const produtosController = {
             });
 
         }
-    }
+    },
+
+    update: async (req, res) => {
+        const { id } = req.params;
+        try {
+            const affectedRows = await Pessoa.atualizar(id, req.body);
+            if (affectedRows === 0) {
+                return res.status(404).json({ 
+                    messagem: 'Registro não encontrado' 
+                });
+            }
+            res.json({ });
+            } catch (error) {
+                res.status(500).json({ error: error.message });
+            }
+        }
 }
 
 module.exports = produtosController;
