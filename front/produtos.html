@@ -3,39 +3,137 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastro de Produtos Capilares</title>
 
-  <link rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.css">
-
-  <title>Cadastro de Produtos</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.css">
 
   <style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
     body {
-      background: #f4f4f4;
-      padding: 30px;
-      font-family: Arial;
+        background-color: #121214;
+        color: #e1e1e6;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 20px;
     }
 
     .container {
-      max-width: 700px;
-      margin: auto;
-      background: white;
-      padding: 25px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        background-color: #202024;
+        padding: 40px;
+        border-radius: 8px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        width: 100%;
+        max-width: 750px; /* Levemente maior apenas para caber a tabela horizontal */
     }
 
     h2 {
-      text-align: center;
-      margin-bottom: 20px;
+        margin-bottom: 24px;
+        color: #8257e5;
+        text-align: center;
+        font-size: 28px;
     }
 
-    .ui.button {
-      margin-top: 10px;
+    /* Sobrescrevendo o Fomantic UI para manter a identidade Dark Mode */
+    .ui.form .field > label {
+        color: #a8a8b3 !important;
+        font-size: 14px;
+        font-weight: normal;
     }
 
-    table {
-      margin-top: 20px;
+    .ui.form input[type=text],
+    .ui.form input[type=number],
+    .ui.form select,
+    .ui.form textarea {
+        width: 100% !important;
+        padding: 12px 16px !important;
+        background-color: #121214 !important;
+        border: 2px solid #29292e !important;
+        border-radius: 4px !important;
+        color: #ffffff !important;
+        font-size: 16px !important;
+        transition: border-color 0.2s, background-color 0.2s;
+    }
+
+    .ui.form input:focus,
+    .ui.form select:focus,
+    .ui.form textarea:focus {
+        outline: none !important;
+        border-color: #8257e5 !important;
+        background-color: #1a1a1e !important;
+    }
+
+    /* Botões personalizados seguindo o tema */
+    .ui.button.btn-primary {
+        background-color: #8257e5 !important;
+        color: #fff !important;
+        padding: 14px !important;
+        font-size: 16px !important;
+        font-weight: bold !important;
+        transition: background-color 0.2s !important;
+    }
+
+    .ui.button.btn-primary:hover {
+        background-color: #9466ff !important;
+    }
+
+    .ui.button.btn-secondary {
+        background-color: #29292e !important;
+        color: #a8a8b3 !important;
+        padding: 14px !important;
+        font-size: 16px !important;
+        transition: background-color 0.2s !important;
+    }
+
+    .ui.button.btn-secondary:hover {
+        background-color: #323238 !important;
+        color: #fff !important;
+    }
+
+    /* Customização da Tabela Fomantic para Dark Mode */
+    .ui.celled.table {
+        background-color: #202024 !important;
+        color: #e1e1e6 !important;
+        border: 1px solid #29292e !important;
+        margin-top: 30px;
+    }
+
+    .ui.celled.table thead th {
+        background-color: #121214 !important;
+        color: #8257e5 !important;
+        border-left: 1px solid #29292e !important;
+    }
+
+    .ui.celled.table td {
+        border-left: 1px solid #29292e !important;
+        border-top: 1px solid #29292e !important;
+    }
+
+    .ui.celled.table tbody tr:hover {
+        background-color: #1a1a1e !important;
+    }
+
+    /* Botões pequenos de ação dentro da tabela */
+    .btn-acao {
+        padding: 6px 12px !important;
+        font-size: 12px !important;
+        margin-right: 5px !important;
+    }
+
+    .message {
+        margin-top: 15px;
+        text-align: center;
+        font-size: 14px;
+        display: none;
+        font-weight: bold;
     }
   </style>
 </head>
@@ -49,59 +147,61 @@
 
     <div class="field">
       <label>Nome do Produto</label>
-      <input type="text" id="nomeProduto" required>
+      <input type="text" id="nomeProduto" required placeholder="Ex: Shampoo Hydration">
     </div>
 
     <div class="field">
       <label>Descrição</label>
-      <textarea id="descricao"></textarea>
+      <textarea id="descricao" rows="2" placeholder="Breve descrição do item..."></textarea>
     </div>
 
     <div class="field">
       <label>Categoria</label>
-      <select id="categoria" class="ui dropdown">
-        <option value="">Selecione</option>
-        <option value="Comida">Comida</option>
-        <option value="Bebida">Bebida</option>
-        <option value="Sobremesa">Sobremesa</option>
+      <select id="categoria" class="ui dropdown" required>
+        <option value="">Selecione uma categoria...</option>
+        <option value="Shampoo">Shampoo</option>
+        <option value="Condicionador">Condicionador</option>
+        <option value="Máscara de Tratamento">Máscara de Tratamento</option>
+        <option value="Finalizador / Óleo">Finalizador / Óleo</option>
+        <option value="Tintura / Tonalizante">Tintura / Tonalizante</option>
+        <option value="Defrizante / Protetor Térmico">Defrizante / Protetor Térmico</option>
       </select>
     </div>
 
     <div class="two fields">
-
       <div class="field">
-        <label>Preço</label>
-        <input type="number" id="preco" step="0.01">
+        <label>Preço (R$)</label>
+        <input type="number" id="preco" step="0.01" required placeholder="0.00">
       </div>
 
       <div class="field">
         <label>Estoque</label>
-        <input type="number" id="estoque">
+        <input type="number" id="estoque" required placeholder="0">
       </div>
-
     </div>
 
     <div class="field">
       <label>Status</label>
-
-      <select id="status" class="ui dropdown">
+      <select id="status" class="ui dropdown" required>
         <option value="Disponível">Disponível</option>
         <option value="Indisponível">Indisponível</option>
       </select>
     </div>
 
-    <button class="ui blue button" type="submit">
-      Salvar Produto
-    </button>
-
-    <button class="ui black button" type="button" onclick="listarProdutos()">
-      Listar Produtos
-    </button>
+    <div style="display: flex; gap: 10px;">
+        <button class="ui button btn-primary" type="submit" style="flex: 2;">
+          Salvar Produto
+        </button>
+        <button class="ui button btn-secondary" type="button" onclick="listarProdutos()" style="flex: 1;">
+          Listar
+        </button>
+    </div>
 
   </form>
 
-  <table class="ui celled table">
+  <div id="mensagemStatus" class="message"></div>
 
+  <table class="ui celled table">
     <thead>
       <tr>
         <th>Produto</th>
@@ -112,162 +212,148 @@
         <th>Ações</th>
       </tr>
     </thead>
-
     <tbody id="tabelaProdutos"></tbody>
-
   </table>
 
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.3/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.js"></script>
+
 <script>
-
 const API_URL = "http://localhost:3000/produtos";
-
 let editandoId = null;
 
 const form = document.getElementById("formProdutos");
 const tabela = document.getElementById("tabelaProdutos");
+const mensagemStatus = document.getElementById("mensagemStatus");
 
-// ================= SALVAR =================
+// Inicializa os seletores estilizados do Fomantic UI
+$(document).ready(function() {
+    $('.ui.dropdown').dropdown();
+});
 
+function exibirMensagem(texto, sucesso = true) {
+    mensagemStatus.textContent = texto;
+    mensagemStatus.style.color = sucesso ? '#04d361' : '#f75a68';
+    mensagemStatus.style.display = 'block';
+}
+
+// ================= SALVAR / ATUALIZAR =================
 form.addEventListener("submit", async (e) => {
-
   e.preventDefault();
 
   const payload = {
-
     nomeProduto: document.getElementById("nomeProduto").value,
-
     descricao: document.getElementById("descricao").value,
-
     categoria: document.getElementById("categoria").value,
-
     preco: document.getElementById("preco").value,
-
     estoque: document.getElementById("estoque").value,
-
     status: document.getElementById("status").value
   };
 
   const metodo = editandoId ? "PUT" : "POST";
+  const url = editandoId ? `${API_URL}/${editandoId}` : API_URL;
 
-  const url = editandoId
-    ? `${API_URL}/${editandoId}`
-    : API_URL;
+  try {
+    const res = await fetch(url, {
+      method: metodo,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
 
-  const res = await fetch(url, {
-
-    method: metodo,
-
-    headers: {
-      "Content-Type": "application/json"
-    },
-
-    body: JSON.stringify(payload)
-  });
-
-  if (res.ok) {
-
-    alert("Produto salvo!");
-
-    form.reset();
-
-    editandoId = null;
-
-    listarProdutos();
-
-  } else {
-
-    alert("Erro ao salvar");
+    if (res.ok) {
+      exibirMensagem(`✅ Produto ${editandoId ? 'atualizado' : 'salvo'} com sucesso!`);
+      form.reset();
+      $('.ui.dropdown').dropdown('clear'); // Reseta visualmente os seletores do Semantic
+      editandoId = null;
+      listarProdutos();
+    } else {
+      const dadosErro = await res.json();
+      throw new Error(dadosErro.error || "Erro interno do servidor.");
+    }
+  } catch (erro) {
+    exibirMensagem(`❌ Erro ao salvar: ${erro.message}`, false);
   }
-
 });
 
 // ================= LISTAR =================
-
 async function listarProdutos() {
+  try {
+    const res = await fetch(API_URL);
+    if (!res.ok) throw new Error("Não foi possível carregar a lista.");
+    
+    const produtos = await res.json();
+    tabela.innerHTML = "";
 
-  const res = await fetch(API_URL);
+    if(produtos.length === 0) {
+        tabela.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#a8a8b3;">Nenhum produto cadastrado.</td></tr>`;
+        return;
+    }
 
-  const produtos = await res.json();
-
-  tabela.innerHTML = "";
-
-  produtos.forEach(produto => {
-
-    tabela.innerHTML += `
-
-      <tr>
-
-        <td>${produto.nomeProduto}</td>
-
-        <td>${produto.categoria}</td>
-
-        <td>R$ ${produto.preco}</td>
-
-        <td>${produto.estoque}</td>
-
-        <td>${produto.status}</td>
-
-        <td>
-
-          <button onclick="editarProduto(${produto.id_produto})">
-            Editar
-          </button>
-
-          <button onclick="excluirProduto(${produto.id_produto})">
-            Excluir
-          </button>
-
-        </td>
-
-      </tr>
-    `;
-
-  });
-
+    produtos.forEach(produto => {
+      tabela.innerHTML += `
+        <tr>
+          <td style="font-weight: bold; color: #fff;">${produto.nomeProduto}</td>
+          <td>${produto.categoria}</td>
+          <td>R$ ${Number(produto.preco).toFixed(2)}</td>
+          <td>${produto.estoque} u.</td>
+          <td style="color: ${produto.status === 'Disponível' ? '#04d361' : '#f75a68'}">${produto.status}</td>
+          <td>
+            <button class="ui button btn-primary btn-acao" onclick="editarProduto(${produto.id_produto})">Editar</button>
+            <button class="ui button btn-secondary btn-acao" onclick="excluirProduto(${produto.id_produto})">Excluir</button>
+          </td>
+        </tr>
+      `;
+    });
+  } catch (erro) {
+      exibirMensagem(`❌ Erro ao buscar itens: ${erro.message}`, false);
+  }
 }
 
 // ================= EDITAR =================
-
 async function editarProduto(id) {
+  try {
+    const res = await fetch(API_URL);
+    const produtos = await res.json();
+    const produto = produtos.find(p => p.id_produto == id);
 
-  const res = await fetch(API_URL);
+    if (!produto) return;
 
-  const produtos = await res.json();
+    editandoId = id;
 
-  const produto = produtos.find(p => p.id_produto == id);
+    document.getElementById("nomeProduto").value = produto.nomeProduto;
+    document.getElementById("descricao").value = produto.descricao;
+    
+    // Atualiza o valor e a interface visível do Fomantic Dropdown
+    $('#categoria').dropdown('set selected', produto.categoria);
+    $('#status').dropdown('set selected', produto.status);
 
-  editandoId = id;
-
-  document.getElementById("nomeProduto").value = produto.nomeProduto;
-
-  document.getElementById("descricao").value = produto.descricao;
-
-  document.getElementById("categoria").value = produto.categoria;
-
-  document.getElementById("preco").value = produto.preco;
-
-  document.getElementById("estoque").value = produto.estoque;
-
-  document.getElementById("status").value = produto.status;
-
+    document.getElementById("preco").value = produto.preco;
+    document.getElementById("estoque").value = produto.estoque;
+    
+    exibirMensagem("✏️ Modo de edição ativado para o item ID: " + id);
+  } catch (erro) {
+      exibirMensagem("❌ Erro ao buscar detalhes do item.", false);
+  }
 }
 
 // ================= EXCLUIR =================
-
 async function excluirProduto(id) {
+  if (!confirm("Tem certeza que deseja remover este produto do estoque?")) return;
 
-  if (!confirm("Deseja excluir?")) return;
-
-  await fetch(`${API_URL}/${id}`, {
-    method: "DELETE"
-  });
-
-  listarProdutos();
-
+  try {
+    const res = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+    if(res.ok) {
+        exibirMensagem("🗑️ Produto removido com sucesso!");
+        listarProdutos();
+    } else {
+        throw new Error("O servidor recusou a exclusão.");
+    }
+  } catch (erro) {
+      exibirMensagem(`❌ Erro ao excluir: ${erro.message}`, false);
+  }
 }
-
 </script>
 
 </body>

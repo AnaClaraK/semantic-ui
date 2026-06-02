@@ -1,76 +1,192 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agendamento Salão</title>
+    <title>Novo Agendamento (Modo Teste)</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h2>Agendamento - Salão de Beleza</h2>
-    <form id="formAgendamento">
-        <div class="form-group">
-            <label>Nome do Cliente</label>
-            <input type="text" id="nome_cliente" required>
-        </div>
-        <div class="form-group">
-            <label>Telefone</label>
-            <input type="text" id="telefone" required>
-        </div>
-        <div class="form-group">
-            <label>Serviço</label>
-            <input type="text" id="servico" required>
-        </div>
-        <div class="form-group">
-            <label>Profissional</label>
-            <input type="text" id="profissional" required>
-        </div>
-        <div class="form-group">
-            <label>Data</label>
-            <input type="date" id="data_agendamento" required>
-        </div>
-        <div class="form-group">
-            <label>Horário</label>
-            <input type="time" id="horario" required>
-        </div>
-        <button type="submit" id="btnSalvar">
-            Agendar Horário
-        </button>
-        <div class="mensagem" id="mensagem"></div>
-    </form>
+
+    <div class="container">
+        <h2>Realizar Agendamento</h2>
+        
+        <form id="formAgendamento">
+            <div class="form-group">
+                <label for="selectCliente">Cliente Cadastrado</label>
+                <select id="selectCliente" required>
+                    <option value="">Selecione um cliente...</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="telefone">Telefone / WhatsApp</label>
+                <input type="text" id="telefone" required placeholder="(00) 00000-0000">
+            </div>
+
+            <div class="form-group">
+                <label for="servico">Serviço</label>
+                <input type="text" id="servico" required placeholder="Ex: Corte de Cabelo">
+            </div>
+
+            <div class="form-group">
+                <label for="profissional">Profissional</label>
+                <select id="profissional" required>
+                    <option value="">Selecione um profissional...</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="data_agendamento">Data</label>
+                <input type="date" id="data_agendamento" required>
+            </div>
+
+            <div class="form-group">
+                <label for="horario">Horário</label>
+                <input type="time" id="horario" required>
+            </div>
+
+            <button type="submit">Confirmar Agendamento</button>
+        </form>
+
+        <div id="mensagemStatus" class="message"></div>
+    </div>
+
     <script>
-        const form = document.getElementById("formAgendamento");
-        form.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const dados = {
-                nome_cliente: document.getElementById("nome_cliente").value,
-                telefone: document.getElementById("telefone").value,
-                servico: document.getElementById("servico").value,
-                profissional: document.getElementById("profissional").value,
-                data_agendamento: document.getElementById("data_agendamento").value,
-                horario: document.getElementById("horario").value
-            };
+        const form = document.getElementById('formAgendamento');
+        const selectCliente = document.getElementById('selectCliente');
+        const profesionalSelect = document.getElementById('profissional');
+        const telefoneInput = document.getElementById('telefone');
+        const mensagemStatus = document.getElementById('mensagemStatus');
+
+        let listaClientes = [];
+
+        async function carregarClientes() {
             try {
-                const resposta = await fetch("http://localhost:3000/agendamento", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(dados)
+                const response = await fetch('http://localhost:3000/clientes'); 
+                if (!response.ok) return;
+
+                listaClientes = await response.json();
+                console.log("Lista de Clientes Carregada:", listaClientes);
+                
+                selectCliente.innerHTML = '<option value="">Selecione um cliente...</option>';
+                listaClientes.forEach(cliente => {
+                    const option = document.createElement('option');
+                    option.value = cliente.id_cliente; 
+                    option.textContent = cliente.nome; 
+                    selectCliente.appendChild(option);
                 });
-                const resultado = await resposta.json();
-                if (resposta.ok) {
-                    document.getElementById("mensagem").innerHTML =
-                        "Agendamento realizado com sucesso!";
+            } catch (error) {
+                console.error("Erro ao carregar clientes:", error);
+            }
+        }
+
+        // 2. Evento de mudança com os testes forçados injetados
+        selectCliente.addEventListener('change', (e) => {
+            const valorSelecionado = e.target.value;
+            
+            const cliente = listaClientes.find(
+                c => String(c.id_cliente) === String(valorSelecionado)
+            );
+
+            console.log("Selecionado:", cliente);
+
+            if (!cliente) {
+                telefoneInput.value = '';
+                return;
+            }
+            
+            // Atribuição normal
+            telefoneInput.value = cliente.telefone || '';
+            
+            // TESTE A: Verificando se o valor entrou no elemento JS
+            console.log("Valor colocado no input:", telefoneInput.value);
+
+            // TESTE B: Verificar duplicidade de IDs na tela (Deve retornar NodeList(1))
+            console.log("Elementos com ID telefone achados na tela:", document.querySelectorAll('#telefone'));
+
+            // TESTE C: Forçando via atributos nativos do DOM
+            telefoneInput.setAttribute('value', cliente.telefone || '');
+
+            // TESTE D: Forçando assincronamente com delay caso haja alguma trava externa
+            setTimeout(() => {
+                telefoneInput.value = cliente.telefone || '';
+                console.log("Valor após setTimeout (100ms):", telefoneInput.value);
+            }, 100);
+        });
+
+        async function carregarProfissionais() {
+            try {
+                const response = await fetch('http://localhost:3000/funcionarios/cabeleireiros');
+                if (!response.ok) return;
+
+                const profissionais = await response.json();
+                
+                profesionalSelect.innerHTML = '<option value="">Selecione um profissional...</option>';
+                profissionais.forEach(p => {
+                    const option = document.createElement('option');
+                    option.value = p.nome;
+                    option.textContent = p.nome;
+                    profesionalSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error("Erro ao carregar profissionais:", error);
+            }
+        }
+
+        carregarClientes();
+        carregarProfissionais();
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const clienteSelecionado = listaClientes.find(c => String(c.id_cliente) === String(selectCliente.value));
+
+            const dadosAgendamento = {
+                nome_cliente: clienteSelecionado?.nome || '',
+                telefone: telefoneInput.value,
+                servico: document.getElementById('servico').value,
+                // CORRIGIDO: padronizado para bater com o esperado no backend e banco
+                profissional: profesionalSelect.value, 
+                data_agendamento: document.getElementById('data_agendamento').value,
+                horario: document.getElementById('horario').value
+            };
+
+            try {
+                const response = await fetch('http://localhost:3000/agendamento', { 
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(dadosAgendamento)
+                });
+
+                const resultado = await response.json();
+
+                if (response.ok) {
+                    mensagemStatus.textContent = `✅ ${resultado.message || 'Agendamento salvo com sucesso!'}`;
+                    mensagemStatus.style.color = '#04d361';
+                    mensagemStatus.style.display = 'block';
                     form.reset();
+                    telefoneInput.value = ''; 
                 } else {
-                    document.getElementById("mensagem").innerHTML =
-                        resultado.erro;
+                    // Captura o erro customizado enviado pelo backend
+                    const msgErroOriginal = resultado.error || resultado.erro || 'Erro desconhecido';
+                    
+                    // Traduz as principais mensagens de violação do Banco de Dados
+                    if (msgErroOriginal.includes("cannot be null")) {
+                        throw new Error("Não foi possível agendar: Existem campos obrigatórios vazios.");
+                    } else if (msgErroOriginal.includes("Incorrect date value")) {
+                        throw new Error("Formato de data inválido para o sistema.");
+                    } else if (msgErroOriginal.includes("no such table") || msgErroOriginal.includes("doesn't exist")) {
+                        throw new Error("Erro de infraestrutura: Tabela de agendamentos não encontrada.");
+                    } else {
+                        throw new Error(msgErroOriginal);
+                    }
                 }
-            } catch (erro) {
-                document.getElementById("mensagem").innerHTML =
-                    "Erro ao conectar com o servidor";
-                console.log(erro);
+            } catch (error) {
+                // Exibe o erro de forma estilizada na div de status da sua tela
+                mensagemStatus.textContent = `❌ Erro ao Salvar: ${error.message}`;
+                mensagemStatus.style.color = '#f75a68';
+                mensagemStatus.style.display = 'block';
             }
         });
     </script>

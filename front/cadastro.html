@@ -29,7 +29,7 @@
             backdrop-filter: blur(10px);
             padding: 40px;
             border-radius: 24px;
-            border: 2px solid var(--primary-color); /* ajuste de cor da borda */
+            border: 2px solid var(--primary-color); 
             box-shadow: 10px 10px 0px #000;
         }
 
@@ -61,24 +61,6 @@
 
         .ui.table { border: 2px solid #000 !important; border-radius: 15px !important; overflow: hidden; }
 
-        /* FIX: ícone do email alinhado */
-        .ui.left.icon.input i.icon {
-            display: flex;
-            align-items: center;
-            height: 100%;
-        }
-
-        /* FIX: remove aparência de "or" redondo */
-        .ui.buttons .or {
-            background: transparent;
-            border: none;
-            font-weight: 600;
-            color: #666;
-            margin: 0 10px;
-            position: static;
-            box-shadow: none;
-        }
-            /* FIX EMAIL ICON ALIGNMENT */
         .ui.left.icon.input i.icon {
             display: flex;
             align-items: center;
@@ -89,6 +71,16 @@
 
         .ui.left.icon.input input {
             padding-left: 2.6em !important;
+        }
+
+        .ui.buttons .or {
+            background: transparent;
+            border: none;
+            font-weight: 600;
+            color: #666;
+            margin: 0 10px;
+            position: static;
+            box-shadow: none;
         }
 </style>
 </head>
@@ -119,11 +111,11 @@
         <div class="two fields">
             <div class="field">
                 <label>Documento Principal</label>
-                <input type="text" id="documento" placeholder="CPF ou CNPJ">
+                <input type="text" id="documento" placeholder="CPF ou CNPJ" required>
             </div>
             <div class="field">
                 <label>Nome Completo / Razão</label>
-                <input type="text" id="nome_razao_social">
+                <input type="text" id="nome_razao_social" required>
             </div>
             <div class="field">
                 <label>Nome Social / Fantasia</label>
@@ -146,7 +138,7 @@
                 <div class="field"><label>Endereço</label><input type="text" id="endereco"></div>
                 <div class="field"><label>Nº</label><input type="text" id="numero"></div>
              </div>
-             <div class="field">
+             <div class="field" style="margin-top: 15px;">
                 <label>Bairro</label>
                 <input type="text" id="bairro">
             </div>
@@ -188,10 +180,10 @@
 <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.js"></script>
 
 <script>
-    const API_URL = 'http://localhost:3000/pessoa';
+    // CORREÇÃO AQUI: Alterado de /pessoa para /pessoas para casar com o index.js
+    const API_URL = 'http://localhost:3000/pessoas';
     let pessoaEditandoId = null;
 
-    // Elementos (com proteção pra não quebrar)
     const form = document.getElementById('formPessoa');
     const inputDocumento = document.getElementById('documento');
     const inputCep = document.getElementById('cep');
@@ -202,6 +194,7 @@
     // ================= VALIDAÇÕES =================
    
     function validarEmail(email) {
+        if (!email) return true; // Se estiver em branco, passa (campo opcional)
         const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return re.test(email);
     }
@@ -306,34 +299,30 @@
         const docLimpo = inputDocumento.value.replace(/\D/g, "");
    
         if (!validarEmail(inputEmail.value)) {
-            alert("E-mail inválido");
+            alert("Por favor, informe um endereço de e-mail válido (ex: nome@empresa.com).");
             return;
         }
    
         if (!validarDocumento(docLimpo)) {
-            alert("Documento inválido");
+            alert("O número de documento (CPF ou CNPJ) digitado é inválido. Verifique os dígitos.");
             return;
         }
    
         const payload = {
             nome_razao_social: document.getElementById('nome_razao_social').value,
             nome_social_fantasia: document.getElementById('nome_social_fantasia').value || null,
-
             documento: docLimpo,
             tipo: docLimpo.length > 11 ? "CNPJ" : "CPF",
-
             cep: inputCep.value.replace(/\D/g, "") || null,
             endereco: document.getElementById('endereco').value || null,
             numero: document.getElementById('numero').value || null,
-
             bairro: document.getElementById('bairro').value || null,
             cidade: document.getElementById('cidade').value || null,
             estado: document.getElementById('estado').value || null,
-
             pais: "Brasil",
-
             email: inputEmail.value || null
         };
+
         try {
             const url = pessoaEditandoId 
                 ? `${API_URL}/${pessoaEditandoId}` 
@@ -348,74 +337,111 @@
             });
    
             if (res.ok) {
-                alert("Salvo com sucesso");
+                alert("Cadastro realizado com sucesso!");
                 limparFormulario();
             } else {
-                alert("Erro ao salvar");
+                const erroData = await res.json();
+                const mensagemOriginal = erroData.error || '';
+                
+                // Trata as mensagens brutas do Banco de Dados
+                if (mensagemOriginal.includes("cannot be null")) {
+                    // Descobre qual coluna causou o erro (ex: 'cep')
+                    const campoErro = mensagemOriginal.match(/'([^']+)'/)[1] || 'dados';
+                    alert(`Não foi possível salvar: O campo de [${campoErro.toUpperCase()}] é obrigatório no sistema.`);
+                } 
+                else if (mensagemOriginal.includes("Duplicate entry")) {
+                    alert("Atenção: Este documento (CPF/CNPJ) já encontra-se registrado no nosso sistema.");
+                } 
+                else if (mensagemOriginal.includes("Data too long")) {
+                    const campoErro = mensagemOriginal.match(/'([^']+)'/)[1] || 'dados';
+                    alert(`Erro de limite: O texto inserido no campo [${campoErro.toUpperCase()}] ultrapassa o tamanho permitido.`);
+                } 
+                else {
+                    // Fallback para qualquer outro erro genérico retornado
+                    alert(`Não foi possível concluir: ${mensagemOriginal || 'Erro interno no servidor.'}`);
+                }
             }
         } catch (err) {
-            alert("Erro de conexão");
+            alert("Falha na comunicação: O servidor está offline ou houve uma queda de conexão.");
         }
     });
-    
    
     // ================= LISTAR =================
    
     async function carregarpessoa() {
-        const res = await fetch(API_URL);
-        const data = await res.json();
-   
-        tabela.innerHTML = "";
-   
-        data.forEach(p => {
-            tabela.innerHTML += `
-                <tr>
-                    <td>${p.nome_razao_social}</td>
-                    <td>${p.documento}</td>
-                    <td>
-                        <button onclick="editarPessoa(${p.id})">Editar</button>
-                        <button onclick="deletarPessoa(${p.id})">Excluir</button>
-                    </td>
-                </tr>
-            `;
-        });
+        try {
+            const res = await fetch(API_URL);
+            const data = await res.json();
+       
+            tabela.innerHTML = "";
+       
+            data.forEach(p => {
+                // Modificado botões simples para botões estilizados do Fomantic UI
+                tabela.innerHTML += `
+                    <tr>
+                        <td>${p.nome_razao_social}</td>
+                        <td>${p.documento}</td>
+                        <td class="right aligned">
+                            <button class="ui tiny blue button" onclick="editarPessoa(${p.id})">Editar</button>
+                            <button class="ui tiny red button" onclick="deletarPessoa(${p.id})">Excluir</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        } catch (error) {
+            console.error("Erro ao listar pessoas:", error);
+        }
     }
    
     // ================= EDITAR =================
     async function editarPessoa(id) {
-        const res = await fetch(API_URL);
-        const data = await res.json();
+        try {
+            const res = await fetch(API_URL);
+            const data = await res.json();
 
-        const p = data.find(x => x.id === id);
-        if (!p) return;
+            const p = data.find(x => x.id === id);
+            if (!p) return;
 
-        pessoaEditandoId = id; // 👈 guarda ID
+            pessoaEditandoId = id; 
 
-        document.getElementById('nome_razao_social').value = p.nome_razao_social || '';
-        document.getElementById('documento').value = p.documento || '';
-        document.getElementById('email').value = p.email || '';
-        document.getElementById('cep').value = p.cep || '';
-        document.getElementById('endereco').value = p.endereco || '';
-        document.getElementById('numero').value = p.numero || '';
-        document.getElementById('bairro').value = p.bairro || '';
-        document.getElementById('cidade').value = p.cidade || '';
-        document.getElementById('estado').value = p.estado || '';
+            document.getElementById('nome_razao_social').value = p.nome_razao_social || '';
+            document.getElementById('nome_social_fantasia').value = p.nome_social_fantasia || '';
+            document.getElementById('documento').value = p.documento || '';
+            document.getElementById('email').value = p.email || '';
+            document.getElementById('cep').value = p.cep || '';
+            document.getElementById('endereco').value = p.endereco || '';
+            document.getElementById('numero').value = p.numero || '';
+            document.getElementById('bairro').value = p.bairro || '';
+            document.getElementById('cidade').value = p.cidade || '';
+            document.getElementById('estado').value = p.estado || '';
 
-        $('.ui.modal').modal('hide');
+            $('.ui.modal').modal('hide');
+        } catch (error) {
+            console.error("Erro ao buscar dados para edição:", error);
+        }
     }
    
     // ================= DELETE =================
    
     async function deletarPessoa(id) {
-        if (!confirm("Excluir?")) return;
+        if (!confirm("Deseja realmente excluir este cadastro?")) return;
    
-        await fetch(`${API_URL}/${id}`, { method: "DELETE" });
-        carregarpessoa();
+        try {
+            const res = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+            if (res.ok) {
+                carregarpessoa();
+            } else {
+                alert("Erro ao remover registro.");
+            }
+        } catch (error) {
+            alert("Erro de conexão ao tentar excluir.");
+        }
     }
    
     // ================= UI =================
    
     function limparFormulario() {
+        pessoaEditandoId = null;
         form.reset();
     }
    
@@ -427,7 +453,7 @@
     function fecharModal() {
         $('.ui.modal').modal('hide');
     }
-    </script>
+</script>
 
 </body>
 </html>
