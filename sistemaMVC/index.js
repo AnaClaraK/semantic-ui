@@ -1,44 +1,22 @@
-const express = require("express");
-const cors = require("cors");
-const pool = require("../sistemaMVC/db");
+require('dotenv').config();
+const express = require('express');
+const cors = require('cors');
 
-// Importando as Rotas Separadas
-const pessoasRoutes = require("../sistemaMVC/src/routes/pessoasRoutes");
-const produtosRoutes = require("../sistemaMVC/src/routes/produtosRoutes");
-const funcionariosRoutes = require("../sistemaMVC/src/routes/funcionariosRoutes");
-const clienteRoutes = require("../sistemaMVC/src/routes/clienteRoutes");
-const agendamentoRoutes = require("../sistemaMVC/src/routes/agendamentoRoutes");
+// Importando os arquivos de rotas
+const pessoasRoutes = require('./src/routes/pessoasRoutes.js');
+const produtosRoutes = require('./src/routes/produtosRoutes.js');
+const clienteRoutes = require('./src/routes/clienteRoutes.js');
+const funcionariosRoutes = require('./src/routes/funcionariosRoutes.js');
+
 const app = express();
-
-// Middlewares Globais
 app.use(cors());
 app.use(express.json());
-app.use(express.static('public')); 
-app.use('/agendamentos', agendamentoRoutes);
 
-// Teste de conexão com o Banco
-pool.getConnection()
-    .then(connection => {
-        console.log('✅ Conexão com o banco de dados MySQL estabelecida com sucesso!');
-        connection.release();
-    })
-    .catch(error => {
-        console.error('❌ Falha ao conectar ao banco de dados MySQL:');
-        console.error(error.message);
-    });
-
-// Definição dos caminhos (Prefixos das rotas)
+// DEFININDO AS ROTAS PADRONIZADAS (Sem a palavra "Routes" na URL do navegador)
 app.use('/pessoas', pessoasRoutes);
 app.use('/produtos', produtosRoutes);
-app.use('/funcionarios', funcionariosRoutes);
-// Altere de: app.use('/clienteRoutes', clienteRoutes);
-// Para isso:
-app.use('/', clienteRoutes);
+app.use('/clientes', clienteRoutes);
+app.use('/funcionarios', funcionariosRoutes); // <-- Agora qualquer requisição vai para /funcionarios
 
-
-
-const PORT = 3000;
-app.listen(PORT, () => {
-    console.log(`🚀 Servidor rodando em http://localhost:${PORT}`);
-});
-module.exports = app;
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`🚀 Servidor rodando em http://localhost:${PORT}`));
