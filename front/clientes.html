@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro de Clientes</title>
+    <title>Cadastro de Agendamentos</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <div class="container">
-        <h2>Cadastrar Cliente</h2>
+        <h2>Cadastrar Agendamento</h2>
         
         <form id="formCliente">
             <div class="form-group">
@@ -23,11 +23,21 @@
             </div>
 
             <div class="form-group">
-                <label for="cep">CEP</label>
-                <input type="text" id="cep" placeholder="00000-000" required>
+                <label for="horario">Horário do Agendamento</label>
+                <input type="datetime-local" id="horario" required>
             </div>
 
-            <button type="submit">Cadastrar Cliente</button>
+            <div class="form-group">
+                <label for="servicofeito">Serviço a ser Feito</label>
+                <input type="text" id="servicofeito" placeholder="Ex: Corte, Tintura..." required>
+            </div>
+
+            <div class="form-group">
+                <label for="preco">Preço (R$)</label>
+                <input type="number" step="0.01" id="preco" placeholder="0.00" required>
+            </div>
+
+            <button type="submit">Cadastrar Agendamento</button>
         </form>
 
         <div id="mensagemStatus" class="message"></div>
@@ -42,9 +52,14 @@
 
             const nome = document.getElementById('nome').value;
             const telefone = document.getElementById('telefone').value;
-            const cep = document.getElementById('cep').value;
+            const horarioRaw = document.getElementById('horario').value; // Formato: YYYY-MM-DDTHH:MM
+            const servicofeito = document.getElementById('servicofeito').value;
+            const preco = document.getElementById('preco').value;
 
-            const dadosCliente = { nome, telefone, cep };
+            // Formata a data do HTML (YYYY-MM-DDTHH:MM) para o padrão do MySQL (YYYY-MM-DD HH:MM:SS)
+            const horario = horarioRaw.replace('T', ' ') + ':00';
+
+            const dadosCliente = { nome, telefone, horario, servicofeito, preco };
 
             try {
                 const response = await fetch('http://localhost:3000/inserircliente', {
@@ -56,22 +71,19 @@
                 const resultado = await response.json();
 
                 if (response.ok) {
-                    mensagemStatus.textContent = `✅ Cliente cadastrado com sucesso! ID: ${resultado.id}`;
+                    const idGerado = resultado.id_cliente;
+                    mensagemStatus.textContent = `✅ Agendamento cadastrado com sucesso! ID: ${idGerado}`;
                     mensagemStatus.style.color = '#04d361';
                     mensagemStatus.style.display = 'block';
                     form.reset();
                 } else {
-                    // Pega o erro detalhado enviado pelo objeto JSON do backend
                     const erroServidor = resultado.error || 'Falha desconhecida no servidor.';
                     throw new Error(erroServidor);
                 }
             } catch (error) {
-                // Trata as mensagens conhecidas de erro do banco de dados de forma amigável
                 let mensagemAmigavel = error.message;
 
-                if (error.message.includes("Unknown column 'cep'")) {
-                    mensagemAmigavel = "A coluna 'cep' não existe na tabela de clientes do banco de dados.";
-                } else if (error.message.includes("cannot be null")) {
+                if (error.message.includes("cannot be null")) {
                     mensagemAmigavel = "Existem campos obrigatórios exigidos pelo banco de dados que não foram preenchidos.";
                 }
 

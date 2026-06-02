@@ -65,7 +65,7 @@ const produtos = {
     deletar: async (id_produto) => {
 
         const [result] = await pool.execute(
-            'DELETE FROM produtos WHERE id_produto = ?',
+            'DELETE FROM produtos WHERE id = ?',
             [id_produto]
         );
 
