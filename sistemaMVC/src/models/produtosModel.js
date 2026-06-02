@@ -2,45 +2,62 @@ const pool = require('../../db');
 
 const produtos = {
 
-    // LISTAR
     listarTodos: async () => {
-
         const [rows] = await pool.execute(
             'SELECT * FROM produtos'
         );
-
         return rows;
     },
 
-    // CADASTRAR
     cadastrar: async (produto) => {
 
         const {
             nome,
             descricao,
-            categoria,
-            preco
+            preco,
+            categoria
         } = produto;
 
         const [result] = await pool.execute(
-
             `INSERT INTO produtos
-            (nome, descricao, categoria, preco)
-            VALUES (?, ?, ?, ?, ?, ?)`,
-
+            (nome, descricao, preco, categoria)
+            VALUES (?, ?, ?, ?)`,
             [
                 nome,
                 descricao,
-                categoria,
-                preco
-                
+                preco,
+                categoria
             ]
         );
 
         return result;
     },
 
-    // DELETAR
+    atualizar: async (id, produto) => {
+
+        const {
+            nome,
+            descricao,
+            preco,
+            categoria
+        } = produto;
+
+        const [result] = await pool.execute(
+            `UPDATE produtos
+             SET nome = ?, descricao = ?, preco = ?, categoria = ?
+             WHERE id = ?`,
+            [
+                nome,
+                descricao,
+                preco,
+                categoria,
+                id
+            ]
+        );
+
+        return result;
+    },
+
     deletar: async (id) => {
 
         const [result] = await pool.execute(
@@ -50,6 +67,6 @@ const produtos = {
 
         return result.affectedRows;
     }
-}
+};
 
 module.exports = produtos;

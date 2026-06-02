@@ -1,18 +1,38 @@
 const ClienteModel = require('../models/clienteModel');
 
 const clienteController = {
+
+    listar: async (req, res) => {
+        try {
+            const clientes = await ClienteModel.listarTodos();
+            res.json(clientes);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    },
+
     inserirCliente: async (req, res) => {
         try {
-            // Removido campos de agendamento e adicionado o cep
+
             const { nome, telefone, cep } = req.body;
 
-            // Passando os novos parâmetros para o seu Model
-            const insertId = await ClienteModel.criar(nome, telefone, cep);
+            const id = await ClienteModel.criar(
+                nome,
+                telefone,
+                cep
+            );
 
-            return res.status(201).json({ id: insertId, ...req.body });
+            res.status(201).json({
+                id_cliente: id,
+                nome,
+                telefone,
+                cep
+            });
+
         } catch (error) {
-            console.error("Erro no Controller:", error);
-            return res.status(500).json({ error: error.message });
+            res.status(500).json({
+                error: error.message
+            });
         }
     }
 };
