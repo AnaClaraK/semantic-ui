@@ -4,6 +4,7 @@ const pool = require("../sistemaMVC/db");
 
 // Importando as Rotas Separadas
 const pessoasRoutes = require("../sistemaMVC/src/routes/pessoasRoutes");
+console.log("Produtos Routes carregado");
 const produtosRoutes = require("../sistemaMVC/src/routes/produtosRoutes");
 const funcionariosRoutes = require("../sistemaMVC/src/routes/funcionariosRoutes");
 const clienteRoutes = require("../sistemaMVC/src/routes/clienteRoutes");

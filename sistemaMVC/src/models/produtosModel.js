@@ -1,7 +1,7 @@
 const pool = require('../../db');
 
 const produtos = {
-
+ 
     listarTodos: async () => {
         const [rows] = await pool.execute(
             'SELECT * FROM produtos'
@@ -12,57 +12,61 @@ const produtos = {
     cadastrar: async (produto) => {
 
         const {
-            nome,
+            nomeProduto,
             descricao,
             preco,
-            categoria
+            categoria,
+            status
         } = produto;
 
         const [result] = await pool.execute(
             `INSERT INTO produtos
-            (nome, descricao, preco, categoria)
-            VALUES (?, ?, ?, ?)`,
+            (nomeProduto, descricao, preco, categoria, status)
+            VALUES (?, ?, ?, ?, ?)`,
             [
-                nome,
+                nomeProduto,
                 descricao,
                 preco,
-                categoria
+                categoria,
+                status
             ]
         );
 
         return result;
     },
 
-    atualizar: async (id, produto) => {
+    atualizar: async (id_produto, produto) => {
 
         const {
-            nome,
+            nomeProduto,
             descricao,
             preco,
-            categoria
+            categoria,
+            status
         } = produto;
 
         const [result] = await pool.execute(
             `UPDATE produtos
-             SET nome = ?, descricao = ?, preco = ?, categoria = ?
-             WHERE id = ?`,
+             SET nomeProduto = ?, descricao = ?, preco = ?, categoria = ?, status=?
+             WHERE id_produto = ?`,
             [
-                nome,
+                nomeProduto,
                 descricao,
                 preco,
                 categoria,
-                id
+                status,
+                id_produto
             ]
         );
 
         return result;
     },
 
-    deletar: async (id) => {
+    deletar: async (id_produto) => {
 
         const [result] = await pool.execute(
-            'DELETE FROM produtos WHERE id = ?',
-            [id]
+            'DELETE FROM produtos WHERE id_produto = ?',
+            [id_produto]
         );
 
         return result.affectedRows;
