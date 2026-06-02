@@ -31,9 +31,9 @@ CREATE TABLE IF NOT EXISTS `agendamentos` (
   `data_agendamento` date NOT NULL,
   `horario` time NOT NULL,
   PRIMARY KEY (`id_agendamento`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Copiando dados para a tabela exemplos.agendamentos: ~8 rows (aproximadamente)
+-- Copiando dados para a tabela exemplos.agendamentos: ~11 rows (aproximadamente)
 DELETE FROM `agendamentos`;
 INSERT INTO `agendamentos` (`id_agendamento`, `nome_cliente`, `telefone`, `servico`, `profissional`, `data_agendamento`, `horario`) VALUES
 	(1, 'Maria Oliveira', '(11) 98888-7777', 'Corte de cabelo', 'Fernanda', '2026-05-30', '14:30:00'),
@@ -43,24 +43,27 @@ INSERT INTO `agendamentos` (`id_agendamento`, `nome_cliente`, `telefone`, `servi
 	(7, 'Maria Silva', '(14) 99999-9999', 'Corte Feminino', 'João Pereira', '2026-06-15', '14:30:00'),
 	(8, 'Lauane', '(14) 99999-9999', 'Corte Feminino', 'Ana Clara', '2026-06-15', '14:30:00'),
 	(9, 'Lauane', '(14) 99999-9999', 'Corte Feminino', 'Ana Clara', '2026-06-15', '14:30:00'),
-	(10, 'Maria Silva', '(14) 99999-9999', 'Corte Feminino', 'João Pereira', '2026-06-15', '14:30:00');
+	(10, 'Maria Silva', '(14) 99999-9999', 'Corte Feminino', 'João Pereira', '2026-06-15', '14:30:00'),
+	(11, 'Lauane Ribeiro', '(14) 99999-9999', 'Manicure', 'Ana Souza', '2026-06-10', '09:00:00'),
+	(12, 'Lauane Ribeiro', '(14) 99999-9999', 'Manicure', 'Ana Souza', '2026-06-10', '09:00:00'),
+	(13, 'Lauane Ribeiro', '(14) 99999-9999', 'Manicure', 'Ana Souza', '2026-06-10', '09:00:00');
 
 -- Copiando estrutura para tabela exemplos.clientes
 DROP TABLE IF EXISTS `clientes`;
 CREATE TABLE IF NOT EXISTS `clientes` (
   `id_cliente` int(11) NOT NULL AUTO_INCREMENT,
   `nome` varchar(70) NOT NULL,
-  `telefone` varchar(20) NOT NULL DEFAULT '',
-  `horario` datetime NOT NULL,
-  `servicofeito` varchar(150) NOT NULL,
-  `preco` decimal(10,2) NOT NULL,
+  `telefone` varchar(20) NOT NULL,
+  `cep` varchar(10) DEFAULT NULL,
   PRIMARY KEY (`id_cliente`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Copiando dados para a tabela exemplos.clientes: ~1 rows (aproximadamente)
+-- Copiando dados para a tabela exemplos.clientes: ~3 rows (aproximadamente)
 DELETE FROM `clientes`;
-INSERT INTO `clientes` (`id_cliente`, `nome`, `telefone`, `horario`, `servicofeito`, `preco`) VALUES
-	(1, 'Maria Oliveira', '(11) 98888-7777', '2026-05-26 14:30:00', 'Corte de cabelo', 80.00);
+INSERT INTO `clientes` (`id_cliente`, `nome`, `telefone`, `cep`) VALUES
+	(1, 'Lauane Ribeiro', '(14) 99999-9999', '18650-000'),
+	(2, 'Lauane Ribeiro', '(14) 99999-9999', '18650-000'),
+	(3, 'Lauane Ribeiro', '(14) 99999-9999', '18650-000');
 
 -- Copiando estrutura para tabela exemplos.funcionarios
 DROP TABLE IF EXISTS `funcionarios`;
@@ -74,14 +77,18 @@ CREATE TABLE IF NOT EXISTS `funcionarios` (
   `data_admissao` date NOT NULL,
   `status_ativo` tinyint(4) DEFAULT 1,
   PRIMARY KEY (`id_funcionario`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Copiando dados para a tabela exemplos.funcionarios: ~3 rows (aproximadamente)
+-- Copiando dados para a tabela exemplos.funcionarios: ~7 rows (aproximadamente)
 DELETE FROM `funcionarios`;
 INSERT INTO `funcionarios` (`id_funcionario`, `nome`, `cargo`, `telefone`, `especialidade`, `comissao_percentual`, `data_admissao`, `status_ativo`) VALUES
 	(1, 'João Silva', 'Gerente', '(11) 99999-9999', 'Administrativo', 10.50, '2026-05-26', 1),
 	(2, 'João Pereira', 'Cabeleireiro', '(14) 98888-8888', 'Corte Masculino', 0.00, '2025-01-15', 1),
-	(3, 'João Pereira', 'Cabeleireiro', '(14) 98888-8888', 'Corte Masculino', 0.00, '2025-01-15', 1);
+	(3, 'João Pereira', 'Cabeleireiro', '(14) 98888-8888', 'Corte Masculino', 0.00, '2025-01-15', 1),
+	(4, 'João Pereira', 'Cabeleireiro', '(14) 98888-8888', 'Corte Masculino', 0.00, '2025-01-15', 1),
+	(5, 'João Pereira', 'Cabeleireiro', '(14) 98888-8888', 'Corte Masculino', 0.00, '2025-01-15', 1),
+	(6, 'João Pereira', 'Cabeleireiro', '(14) 98888-8888', 'Corte Masculino', 0.00, '2025-01-15', 1),
+	(7, 'João Pereira', 'Cabeleireiro', '(14) 98888-8888', 'Corte Masculino', 0.00, '2025-01-15', 1);
 
 -- Copiando estrutura para tabela exemplos.pessoa
 DROP TABLE IF EXISTS `pessoa`;
@@ -111,15 +118,20 @@ DELETE FROM `pessoa`;
 DROP TABLE IF EXISTS `produtos`;
 CREATE TABLE IF NOT EXISTS `produtos` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `nome` varchar(100) DEFAULT NULL,
-  `descricao` varchar(100) DEFAULT NULL,
-  `preco` decimal(10,2) DEFAULT NULL,
+  `nome` varchar(100) NOT NULL,
+  `descricao` varchar(255) DEFAULT NULL,
+  `preco` decimal(10,2) NOT NULL,
   `categoria` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Copiando dados para a tabela exemplos.produtos: ~0 rows (aproximadamente)
+-- Copiando dados para a tabela exemplos.produtos: ~4 rows (aproximadamente)
 DELETE FROM `produtos`;
+INSERT INTO `produtos` (`id`, `nome`, `descricao`, `preco`, `categoria`) VALUES
+	(2, 'Shampoo Hidratante', 'Shampoo para hidratação intensa', 29.90, 'Cosméticos'),
+	(3, 'Shampoo Hidratante', 'Shampoo para hidratação intensa', 29.90, 'Cosméticos'),
+	(4, 'Shampoo Hidratante', 'Shampoo para hidratação intensa', 29.90, 'Cosméticos'),
+	(5, 'Shampoo Hidratante', 'Shampoo para hidratação intensa', 29.90, 'Cosméticos');
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
