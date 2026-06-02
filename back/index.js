@@ -128,7 +128,7 @@ app.get('/produtos', async (req, res) => {
 
 app.post('/produtos', async (req, res) => {
     const { nomeProduto, descricao, preco, estoque, categoria } = req.body;
-    const query = `INSERT INTO produtos (nomeProduto, descricao, preco, estoque, categoria) VALUES (?, ?, ?, ?, ?)`;
+    const query = `INSERT INTO produtos (nomeProduto, descricao, preco, estoque, categoria, status) VALUES (?, ?, ?, ?, ?,?)`;
     const values = [nomeProduto, descricao, preco, estoque, categoria];
 
     try {
