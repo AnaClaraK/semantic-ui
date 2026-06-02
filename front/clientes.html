@@ -23,21 +23,11 @@
             </div>
 
             <div class="form-group">
-                <label for="horario">Data e Horário</label>
-                <input type="datetime-local" id="horario" required>
+                <label for="cep">CEP</label>
+                <input type="text" id="cep" placeholder="00000-000" required>
             </div>
 
-            <div class="form-group">
-                <label for="servicofeito">Serviço a ser Feito</label>
-                <input type="text" id="servicofeito" required>
-            </div>
-
-            <div class="form-group">
-                <label for="preco">Preço (R$)</label>
-                <input type="number" id="preco" step="0.01" required>
-            </div>
-
-            <button type="submit">Salvar Agendamento</button>
+            <button type="submit">Cadastrar Cliente</button>
         </form>
 
         <div id="mensagemStatus" class="message"></div>
@@ -52,14 +42,9 @@
 
             const nome = document.getElementById('nome').value;
             const telefone = document.getElementById('telefone').value;
-            const horarioInput = document.getElementById('horario').value;
-            
-            const horario = horarioInput.replace('T', ' ') + ':00'; 
-            
-            const servicofeito = document.getElementById('servicofeito').value;
-            const preco = document.getElementById('preco').value;
+            const cep = document.getElementById('cep').value;
 
-            const dadosCliente = { nome, telefone, horario, servicofeito, preco: parseFloat(preco) };
+            const dadosCliente = { nome, telefone, cep };
 
             try {
                 const response = await fetch('http://localhost:3000/inserircliente', {
@@ -68,17 +53,29 @@
                     body: JSON.stringify(dadosCliente)
                 });
 
+                const resultado = await response.json();
+
                 if (response.ok) {
-                    const resultado = await response.json();
                     mensagemStatus.textContent = `✅ Cliente cadastrado com sucesso! ID: ${resultado.id}`;
                     mensagemStatus.style.color = '#04d361';
                     mensagemStatus.style.display = 'block';
                     form.reset();
                 } else {
-                    throw new Error('Falha no servidor ao cadastrar');
+                    // Pega o erro detalhado enviado pelo objeto JSON do backend
+                    const erroServidor = resultado.error || 'Falha desconhecida no servidor.';
+                    throw new Error(erroServidor);
                 }
             } catch (error) {
-                mensagemStatus.textContent = `❌ Erro ao conectar com o servidor: ${error.message}`;
+                // Trata as mensagens conhecidas de erro do banco de dados de forma amigável
+                let mensagemAmigavel = error.message;
+
+                if (error.message.includes("Unknown column 'cep'")) {
+                    mensagemAmigavel = "A coluna 'cep' não existe na tabela de clientes do banco de dados.";
+                } else if (error.message.includes("cannot be null")) {
+                    mensagemAmigavel = "Existem campos obrigatórios exigidos pelo banco de dados que não foram preenchidos.";
+                }
+
+                mensagemStatus.textContent = `❌ Erro ao cadastrar: ${mensagemAmigavel}`;
                 mensagemStatus.style.color = '#f75a68';
                 mensagemStatus.style.display = 'block';
             }

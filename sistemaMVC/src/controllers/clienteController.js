@@ -3,9 +3,11 @@ const ClienteModel = require('../models/clienteModel');
 const clienteController = {
     inserirCliente: async (req, res) => {
         try {
-            const { nome, telefone, horario, servicofeito, preco } = req.body;
+            // Removido campos de agendamento e adicionado o cep
+            const { nome, telefone, cep } = req.body;
 
-            const insertId = await ClienteModel.criar(nome, telefone, horario, servicofeito, Number(preco));
+            // Passando os novos parâmetros para o seu Model
+            const insertId = await ClienteModel.criar(nome, telefone, cep);
 
             return res.status(201).json({ id: insertId, ...req.body });
         } catch (error) {

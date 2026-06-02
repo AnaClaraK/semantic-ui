@@ -1,4 +1,4 @@
-const pool = require('../config/db');
+const pool = require('../../db');
 
 const Pessoa = {
     // Listar todos (GET)
