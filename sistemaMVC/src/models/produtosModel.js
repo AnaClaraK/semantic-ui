@@ -16,27 +16,24 @@ const produtos = {
     cadastrar: async (produto) => {
 
         const {
-            nomeProduto,
+            nome,
             descricao,
             categoria,
-            preco,
-            estoque,
-            status
+            preco
         } = produto;
 
         const [result] = await pool.execute(
 
             `INSERT INTO produtos
-            (nomeProduto, descricao, categoria, preco, estoque, status)
+            (nome, descricao, categoria, preco)
             VALUES (?, ?, ?, ?, ?, ?)`,
 
             [
-                nomeProduto,
+                nome,
                 descricao,
                 categoria,
-                preco,
-                estoque,
-                status
+                preco
+                
             ]
         );
 
@@ -47,7 +44,7 @@ const produtos = {
     deletar: async (id) => {
 
         const [result] = await pool.execute(
-            'DELETE FROM produtos WHERE id_produto = ?',
+            'DELETE FROM produtos WHERE id = ?',
             [id]
         );
 

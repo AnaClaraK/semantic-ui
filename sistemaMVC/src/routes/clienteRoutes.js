@@ -57,12 +57,21 @@ router.post('/inserircliente', async (req, res) => {
     ];
 
     try {
+
+        console.log("BODY:", req.body);
+        console.log("VALUES:", values);
+    
         const [result] = await pool.execute(query, values);
-        res.status(201).json({ id: result.insertId, ...req.body });
+    
+        res.status(201).json({
+            id: result.insertId,
+            ...req.body
+        });
+    
     } catch (error) {
-        // Mostra o motivo exato no terminal do Node (Ex: Coluna 'cep' inexistente ou tipo incorreto)
-        console.error("❌ Erro ao inserir cliente:", error);
-        res.status(500).json({ error: error.message });
+        res.status(500).json({
+            error: error.message
+        });
     }
 });
 
