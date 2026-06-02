@@ -2,46 +2,67 @@ const produtos = require('../models/produtosModel');
 
 const produtosController = {
 
-    // LISTAR TODOS OS PRODUTOS
     index: async (req, res) => {
         try {
             const lista = await produtos.listarTodos();
             res.json(lista);
         } catch (error) {
-            res.status(500).json({
-                error: error.message
-            });
+            res.status(500).json({ error: error.message });
         }
     },
 
-    // CADASTRAR NOVO PRODUTO
     create: async (req, res) => {
         try {
             const resultado = await produtos.cadastrar(req.body);
+
             res.status(201).json({
-                mensagem: "Produto cadastrado com sucesso!",
+                mensagem: 'Produto cadastrado com sucesso!',
                 resultado
             });
+
         } catch (error) {
-            res.status(500).json({
-                error: error.message
-            });
+            res.status(500).json({ error: error.message });
         }
     },
 
-    // DELETAR PRODUTO POR ID
-    delete: async (req, res) => {
-        const { id } = req.params;
+    update: async (req, res) => {
+
         try {
-            const affectedRows = await produtos.deletar(id);
+
+            const { id } = req.params;
+
+            const resultado = await produtos.atualizar(
+                id,
+                req.body
+            );
+
+            res.json({
+                mensagem: 'Produto atualizado com sucesso!',
+                resultado
+            });
+
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    },
+
+    delete: async (req, res) => {
+
+        try {
+
+            const { id } = req.params;
+
+            const affectedRows =
+                await produtos.deletar(id);
 
             if (affectedRows === 0) {
                 return res.status(404).json({
-                    mensagem: "Produto não encontrado"
+                    mensagem: 'Produto não encontrado'
                 });
             }
 
-            res.status(204).send(); // Retorna sucesso sem corpo (padrão para exclusão)
+            res.status(204).send();
+
         } catch (error) {
             res.status(500).json({
                 error: error.message
@@ -50,5 +71,4 @@ const produtosController = {
     }
 };
 
-// ATENÇÃO: Exportando o controller apenas uma vez no fim do arquivo
 module.exports = produtosController;

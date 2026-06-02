@@ -1,16 +1,24 @@
 const pool = require('../../db');
 
 const ClienteModel = {
-   
-    criar: async (nome, telefone, horario, servicofeito, preco) => {
-        const query = `
-            INSERT INTO clientes 
-            (nome, telefone, horario, servicofeito, preco) 
-            VALUES (?, ?, ?, ?, ?)
-        `;
-        const values = [nome, telefone, horario, servicofeito, preco];
-        const [result] = await pool.execute(query, values);
-        return result.insertId; 
+
+    listarTodos: async () => {
+        const [rows] = await pool.execute(
+            'SELECT * FROM clientes'
+        );
+        return rows;
+    },
+
+    criar: async (nome, telefone, cep) => {
+
+        const [result] = await pool.execute(
+            `INSERT INTO clientes
+            (nome, telefone, cep)
+            VALUES (?, ?, ?)`,
+            [nome, telefone, cep]
+        );
+
+        return result.insertId;
     }
 };
 

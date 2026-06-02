@@ -7,12 +7,14 @@ const pessoasRoutes = require("../sistemaMVC/src/routes/pessoasRoutes");
 const produtosRoutes = require("../sistemaMVC/src/routes/produtosRoutes");
 const funcionariosRoutes = require("../sistemaMVC/src/routes/funcionariosRoutes");
 const clienteRoutes = require("../sistemaMVC/src/routes/clienteRoutes");
+const agendamentoRoutes = require("../sistemaMVC/src/routes/agendamentoRoutes");
 const app = express();
 
 // Middlewares Globais
 app.use(cors());
 app.use(express.json());
 app.use(express.static('public')); 
+app.use('/agendamentos', agendamentoRoutes);
 
 // Teste de conexão com o Banco
 pool.getConnection()
